@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function edit(Request $request)
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+       return view('profile.security', [
+    'user' => $request->user(),
+]);
+
     }
 
     public function update(Request $request)
@@ -53,30 +55,27 @@ class ProfileController extends Controller
     public function photo(Request $request)
     {
         $request->validate([
-            'photo' => 'required|image|max:2048',
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $user = auth()->user();
-        if (!$user) {
-            abort(403);
+
+        $path = 'profile/'.$user->id.'.jpg';
+
+        // hapus foto lama (jaga storage tetap bersih)
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
         }
 
-        // Pastikan folder ada
-        $path = public_path('storage/profile');
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
+        $image = Image::make($request->file('photo'))
+            ->fit(400, 400)
+            ->encode('jpg', 80);
 
-        // 🔥 Resize + crop ke ukuran tetap
-        $filename = time().'.jpg';
+        Storage::disk('public')->put($path, (string) $image);
 
-        Image::make($request->file('photo'))
-            ->fit(300, 300) // ukuran FIX 300x300
-            ->save($path.'/'.$filename, 80); // kualitas 80%
-
-        // Simpan ke DB
-        $user->photo = $filename;
-        $user->save();
+        $user->update([
+            'photo' => $path
+        ]);
 
         return back();
     }

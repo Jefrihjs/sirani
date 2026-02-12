@@ -1,12 +1,16 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Profil ASN')
+@section('icon')
+<svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4.5 20.25a7.5 7.5 0 0115 0" />
+</svg>
+@endsection
 
 @section('content')
-
-<h2 class="font-semibold text-xl text-gray-800 mb-4">
-    Profil ASN
-</h2>
 
 {{-- HEADER PROFIL --}}
 <div class="p-6 max-w-4xl mx-auto bg-white shadow rounded-lg

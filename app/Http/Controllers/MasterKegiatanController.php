@@ -9,9 +9,16 @@ class MasterKegiatanController extends Controller
 {
     public function index()
     {
-        $data = MasterKegiatan::orderBy('nama_kegiatan')->get();
+        $data = MasterKegiatan::where(function ($q) {
+                $q->where('user_id', auth()->id())
+                ->orWhere('is_global', 1);
+            })
+            ->orderBy('nama_kegiatan')
+            ->get();
+
         return view('master_kegiatan.index', compact('data'));
     }
+
 
     public function create()
     {
@@ -24,14 +31,31 @@ class MasterKegiatanController extends Controller
             'nama_kegiatan' => 'required|string|max:255',
         ]);
 
-        MasterKegiatan::create([
-            'nama_kegiatan' => $request->nama_kegiatan,
-            'aktif' => true,
-        ]);
+        if (auth()->user()->isAdmin() && $request->has('is_global')) {
+
+            // 🔵 Global
+            MasterKegiatan::create([
+                'user_id' => null,
+                'nama_kegiatan' => $request->nama_kegiatan,
+                'aktif' => 1,
+                'is_global' => 1,
+            ]);
+
+        } else {
+
+            // 🟢 Personal
+            MasterKegiatan::create([
+                'user_id' => auth()->id(),
+                'nama_kegiatan' => $request->nama_kegiatan,
+                'aktif' => 1,
+                'is_global' => 0,
+            ]);
+        }
 
         return redirect()->route('master-kegiatan.index')
-            ->with('success', 'Kegiatan berhasil ditambahkan');
+            ->with('success', 'Kegiatan berhasil ditambahkan.');
     }
+
 
     public function edit(MasterKegiatan $master_kegiatan)
     {
@@ -56,11 +80,20 @@ class MasterKegiatanController extends Controller
             ->with('success', 'Kegiatan berhasil diupdate');
     }
 
-    public function destroy(MasterKegiatan $masterKegiatan)
+    public function destroy($id)
     {
-        $masterKegiatan->delete();
+        $kegiatan = MasterKegiatan::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
-        return redirect()->route('master-kegiatan.index')
-            ->with('success', 'Kegiatan berhasil dihapus');
+        // Cek apakah sudah dipakai di laporan
+        if ($kegiatan->laporanKegiatan()->exists()) {
+            return back()->with('error', 'Kegiatan sudah digunakan dalam laporan dan tidak bisa dihapus.');
+        }
+
+        $kegiatan->delete();
+
+        return back()->with('success', 'Kegiatan berhasil dihapus.');
     }
+
 }

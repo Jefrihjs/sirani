@@ -1,72 +1,127 @@
 @extends('layouts.dashboard')
+@section('title', 'Master Kegiatan')
+
+@section('icon')
+<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round"
+        d="M2.25 6.75h7.5l2.25 3h9v9a2.25 2.25 0 01-2.25 2.25h-13.5A2.25 2.25 0 012.25 18V6.75z" />
+</svg>
+@endsection
 
 @section('content')
-        <h2 class="font-semibold text-xl text-gray-800">
-            Master Kegiatan
-        </h2>
 
-    <div class="py-6 px-6">
-        @if (session('success'))
-            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
+<div class="page-wrapper">
 
-        <a href="{{ route('master-kegiatan.create') }}"
-           class="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded">
-            + Tambah Kegiatan
-        </a>
-
-        <div class="bg-white shadow rounded">
-            <table class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border p-2 w-12 text-center">No</th>
-                        <th class="border p-2 text-left">Nama Kegiatan</th>
-                        <th class="border p-2 w-24 text-center">Status</th>
-                        <th class="border p-2 w-32 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($data as $i => $row)
-                        <tr>
-                            <td class="border p-2 text-center">
-                                {{ $i + 1 }}
-                            </td>
-
-                            <td class="border p-2">
-                                {{ $row->nama_kegiatan }}
-                            </td>
-
-                            <td class="border p-2 text-center">
-                                @if($row->aktif)
-                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded">
-                                        Nonaktif
-                                    </span>
-                                @endif
-                            </td>
-
-                            <td class="border p-2 text-center">
-                                <a href="{{ route('master-kegiatan.edit', $row->id) }}"
-                                class="text-blue-600 hover:underline">
-                                    Edit
-                                </a>
-                            </td>
-
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="border p-4 text-center text-gray-500">
-                                Belum ada data master kegiatan
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    {{-- ALERT --}}
+    @if (session('success'))
+        <div class="alert-success">
+            {{ session('success') }}
         </div>
+    @endif
+
+
+    {{-- HEADER --}}
+    <div class="page-header">
+        <div>
+            <h1>Master Kegiatan</h1>
+            <p class="page-subtitle">Daftar jenis kegiatan pribadi Anda</p>
+        </div>
+
+        <a href="{{ route('master-kegiatan.create') }}" class="link-cta">
+            <span class="plus-icon">＋</span>
+            Tambah Kegiatan
+        </a>
     </div>
+
+
+    {{-- CARD --}}
+    <div class="card">
+
+        <table class="table-modern">
+
+            <thead>
+                <tr>
+                    <th style="width:70px;">No</th>
+                    <th>Nama Kegiatan</th>
+                    <th style="width:120px;">Status</th>
+                    <th style="width:120px;">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse ($data as $i => $row)
+                <tr>
+
+                    <td>{{ $i + 1 }}</td>
+
+                    <td>
+                        <span class="badge-name">
+                            {{ $row->nama_kegiatan }}
+                        </span>
+
+                        @if($row->is_global)
+                            <span class="badge-global">Global</span>
+                        @else
+                            <span class="badge-personal">Personal</span>
+                        @endif
+                    </td>
+
+                    <td>
+                        @if($row->aktif)
+                            <span class="badge-success">
+                                Aktif
+                            </span>
+                        @else
+                            <span class="badge-muted">
+                                Nonaktif
+                            </span>
+                        @endif
+                    </td>
+
+                    <td>
+                        <div class="action-group">
+
+                            {{-- Edit --}}
+                            <a href="{{ route('master-kegiatan.edit', $row->id) }}"
+                            class="action-btn edit"
+                            title="Edit">
+                                ✏
+                            </a>
+
+                            {{-- Hapus --}}
+                            <form action="{{ route('master-kegiatan.destroy', $row->id) }}"
+                                method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                        class="action-btn delete"
+                                        title="Hapus"
+                                        onclick="return confirm('Yakin ingin menghapus kegiatan ini?')">
+                                    🗑
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="empty-state">
+                        Belum ada master kegiatan.
+                        <br>
+                        <small>Tambahkan kegiatan pertama Anda.</small>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
 @endsection
+

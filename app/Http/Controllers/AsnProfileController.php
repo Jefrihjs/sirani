@@ -4,44 +4,51 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AsnProfile;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class AsnProfileController extends Controller
 {
-    // Tampilkan halaman profil (view-only + edit field tertentu)
+    // ===============================
+    // SHOW (LIHAT PROFIL ASN)
+    // ===============================
     public function show()
-    {
-        $user = Auth::user();
-
-        $profile = AsnProfile::firstOrCreate(
-            ['user_id' => $user->id],
-            [
-                'jabatan' => '',
-                'jenis_jabatan' => 'Fungsional',
-                'unit_kerja' => '',
-                'unit_teknis' => '',
-                'golongan_ruang' => '',
-                'status_kepegawaian' => 'PNS',
-            ]
-        );
-
-        return view('profile.asn', compact('user', 'profile'));
-    }
-
-    public function edit()
     {
         $user = auth()->user();
         $profile = $user->asnProfile;
 
-        // daftar calon atasan (simple dulu)
-        $atasanList = \App\Models\User::where('id', '!=', $user->id)->get();
-
-        return view('profile.edit', compact('user', 'profile', 'atasanList'));
+        return view('profile.show', compact(
+            'user',
+            'profile'
+        ));
     }
 
+    // ===============================
+    // EDIT (FORM EDIT PROFIL ASN)
+    // ===============================
+    public function edit()
+    {
+        $user = auth()->user();
+
+        $profile = AsnProfile::firstOrCreate([
+            'user_id' => $user->id
+        ]);
+
+        $atasanList = User::where('id', '!=', $user->id)->get();
+
+        return view('profile.edit', compact(
+            'user',
+            'profile',
+            'atasanList'
+        ));
+    }
+
+    // ===============================
+    // UPDATE (SIMPAN PROFIL ASN)
+    // ===============================
     public function update(Request $request)
     {
-
         $user = auth()->user();
         $profile = $user->asnProfile;
 
@@ -54,21 +61,27 @@ class AsnProfileController extends Controller
             'status_kepegawaian' => 'required',
         ]);
 
-        /* ================= FOTO ================= */
+        /* ===== FOTO PROFIL ===== */
         if ($request->hasFile('photo')) {
 
-    if ($user->photo && \Storage::disk('public')->exists($user->photo)) {
-        \Storage::disk('public')->delete($user->photo);
-    }
+            $path = 'profile/'.$user->id.'.jpg';
 
-    $path = $request->file('photo')->store('profile', 'public');
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
 
-    $user->photo = $path;
-    $user->save();
-}
+            $image = Image::make($request->file('photo'))
+                ->fit(400, 400)
+                ->encode('jpg', 80);
 
+            Storage::disk('public')->put($path, (string) $image);
 
-        /* ================= DATA PROFIL ================= */
+            $user->update([
+                'photo' => $path
+            ]);
+        }
+
+        /* ===== DATA ASN ===== */
         $profile->update([
             'jabatan' => $request->jabatan,
             'jenis_jabatan' => $request->jenis_jabatan,
@@ -83,5 +96,4 @@ class AsnProfileController extends Controller
             ->route('profil.asn')
             ->with('success', 'Profil berhasil diperbarui');
     }
-
 }

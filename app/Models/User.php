@@ -20,8 +20,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'nip',
+        'email',
         'password',
         'role',
+        'is_active',
     ];
 
     /**
@@ -43,12 +45,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // 🔥 INI KUNCI LOGIN NIP
-    public function getAuthIdentifierName()
-    {
-        return 'nip';
-    }
-
     public function asnProfile()
     {
         return $this->hasOne(\App\Models\AsnProfile::class);
@@ -58,5 +54,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\AsnProfile::class, 'atasan_id');
     }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isPegawai()
+    {
+        return $this->role === 'pegawai';
+    }
+
 
 }

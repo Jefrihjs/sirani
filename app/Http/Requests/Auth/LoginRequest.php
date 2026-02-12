@@ -46,10 +46,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(
-            $this->only('nip', 'password'),
-            $this->boolean('remember')
-        )) {
+        if (! Auth::attempt([
+            'nip' => $this->nip,
+            'password' => $this->password,
+        ], $this->boolean('remember'))) {
+
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -59,6 +60,7 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
     }
+
 
     public function username()
     {

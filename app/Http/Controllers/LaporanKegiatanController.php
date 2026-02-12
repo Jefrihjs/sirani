@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\LaporanKegiatan;
@@ -100,7 +101,11 @@ class LaporanKegiatanController extends Controller
 
     public function create()
     {
-        $kegiatan = MasterKegiatan::where('aktif', true)
+        $kegiatan = MasterKegiatan::where(function ($q) {
+                $q->where('user_id', auth()->id())
+                ->orWhere('is_global', 1);
+            })
+            ->where('aktif', 1)
             ->orderBy('nama_kegiatan')
             ->get();
 
@@ -113,16 +118,30 @@ class LaporanKegiatanController extends Controller
             'master_kegiatan_id' => 'required|exists:master_kegiatan,id',
             'tanggal' => 'required|date',
             'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'jam_selesai' => 'required|date_format:H:i',
             'tempat' => 'required|string|max:255',
             'uraian' => 'required|string',
             'foto' => 'required|array|min:2',
             'foto.*' => 'image|max:2048',
         ]);
 
-        $mulai   = Carbon::parse($request->jam_mulai);
-        $selesai = Carbon::parse($request->jam_selesai);
+        $master = \App\Models\MasterKegiatan::where('id', $request->master_kegiatan_id)
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())
+                ->orWhere('is_global', 1);
+            })
+            ->firstOrFail();
+
+        $mulai   = Carbon::createFromFormat('H:i', $request->jam_mulai);
+        $selesai = Carbon::createFromFormat('H:i', $request->jam_selesai);
+
+        // 🔥 kalau jam selesai lebih kecil, anggap lintas hari
+        if ($selesai->lessThan($mulai)) {
+            $selesai->addDay();
+        }
+
         $durasiMenit = $mulai->diffInMinutes($selesai);
+
 
         // CEK BENTROK JAM
         $bentrok = LaporanKegiatan::where('user_id', auth()->user()->id)

@@ -1,92 +1,88 @@
 @extends('layouts.dashboard')
 
+@section('title', 'Input Laporan Kegiatan')
+@section('icon')
+<svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M19.5 14.25V6a2.25 2.25 0 00-2.25-2.25H8.25A2.25 2.25 0 006 6v12a2.25 2.25 0 002.25 2.25h5.25" />
+</svg>
+@endsection
 @section('content')
-        <h2 class="font-semibold text-xl text-gray-800">
-            Input Laporan Kegiatan
-        </h2>
+<div class="container-narrow">
 
-<div class="max-w-3xl mx-auto p-6">
-    <h2 class="text-xl font-semibold mb-6">
-        Input Laporan Kegiatan
-    </h2>
-
-    <form action="{{ route('laporan_kegiatan.store') }}"
-          method="POST"
-          enctype="multipart/form-data"
-          class="bg-white p-6 rounded shadow space-y-4">
-
-        @csrf
-
+    <div class="form-header">
         <div>
-            <label class="block text-sm font-medium">Kegiatan</label>
-            <select name="master_kegiatan_id" class="w-full border rounded p-2" required>
-                <option value="">-- Pilih Kegiatan --</option>
-                @foreach($kegiatan as $k)
-                    <option value="{{ $k->id }}">{{ $k->nama_kegiatan }}</option>
-                @endforeach
-            </select>
+            <h1>Input Laporan Kegiatan</h1>
+            <p class="form-subtitle">Tambahkan aktivitas kerja harian ASN</p>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium">Tanggal</label>
-            <input type="date" name="tanggal" class="w-full border rounded p-2" required>
-        </div>
+        <a href="{{ route('laporan_kegiatan.index') }}" class="link-back">
+            ← Kembali
+        </a>
+    </div>
 
-        <div class="flex gap-4">
-            <div class="w-1/2">
-                <label class="block text-sm font-medium">Jam Mulai</label>
-                <input type="time" name="jam_mulai" class="w-full border rounded p-2" required>
+    <div class="card">
+        <form action="{{ route('laporan_kegiatan.store') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              class="space-y-6">
+
+            @csrf
+
+            {{-- Jenis Kegiatan --}}
+            <div>
+                <label class="form-label">Nama Kegiatan</label>
+                <select name="master_kegiatan_id" class="form-input" required>
+                    <option value="" disabled selected>-- Pilih Jenis Kegiatan --</option>
+                    @foreach($kegiatan as $k)
+                        <option value="{{ $k->id }}">{{ $k->nama_kegiatan }}</option>
+                    @endforeach
+                </select>
             </div>
-            <div class="w-1/2">
-                <label class="block text-sm font-medium">Jam Selesai</label>
-                <input type="time" name="jam_selesai" class="w-full border rounded p-2" required>
+
+            {{-- Grid --}}
+            <div class="form-grid-2">
+                <div>
+                    <label class="form-label">Tanggal</label>
+                    <input type="date" name="tanggal" class="form-input" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Tempat</label>
+                    <input type="text" name="tempat" class="form-input" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Jam Mulai</label>
+                    <input type="time" name="jam_mulai" class="form-input" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Jam Selesai</label>
+                    <input type="time" name="jam_selesai" class="form-input" required>
+                </div>
             </div>
-        </div>
 
-        <div>
-            <label class="block text-sm font-medium">Tempat</label>
-            <input type="text" name="tempat" class="w-full border rounded p-2" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium">Uraian</label>
-            <textarea name="uraian" rows="4" class="w-full border rounded p-2" required></textarea>
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium">Foto Kegiatan (min 2)</label>
-            <input type="file" name="foto[]" multiple required>
-        </div>
-
-        <div style="margin-top:20px">
-            <div class="pt-4 flex gap-3">
-                <button type="submit"
-                style="
-                    background:#2563eb;
-                    color:white;
-                    padding:10px 18px;
-                    border:none;
-                    border-radius:6px;
-                    font-weight:bold;
-                    cursor:pointer;
-                ">
-                💾 Simpan Laporan
-            </button>
-
-                <a href="{{ route('laporan_kegiatan.index') }}"
-                style="
-                        margin-left:10px;
-                        background:#e5e7eb;
-                        color:#111827;
-                        padding:10px 18px;
-                        border-radius:6px;
-                        text-decoration:none;
-                        font-weight:bold;
-                ">
-                ↩️ Batal
-                </a>
+            {{-- Uraian --}}
+            <div>
+                <label class="form-label">Uraian Kegiatan</label>
+                <textarea name="uraian" rows="5" class="form-input" required></textarea>
             </div>
-        </div>
-    </form>
+
+            {{-- Foto --}}
+            <div>
+                <label class="form-label">Foto Kegiatan (min. 2)</label>
+                <input type="file" name="foto[]" multiple class="form-input" required>
+            </div>
+
+            {{-- Actions --}}
+            <div class="form-actions">
+                <button class="btn-primary">Simpan Laporan</button>
+                <a href="{{ route('laporan_kegiatan.index') }}" class="btn-secondary">Batal</a>
+            </div>
+
+        </form>
+    </div>
+
 </div>
 @endsection

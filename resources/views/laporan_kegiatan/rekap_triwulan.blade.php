@@ -1,90 +1,124 @@
 @extends('layouts.dashboard')
-
+@section('title', 'Laporan Triwulan')
+@section('icon')
+<svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 3v18h18M9 17V9m4 8v-5m4 5V7" />
+</svg>
+@endsection
 @section('content')
-<h2 class="font-semibold text-xl">Rekap Triwulan {{ $triwulan }} Tahun {{ $tahun }}</h2>
 
-    <div class="p-6">
+<div class="page-wrapper">
 
-        {{-- FILTER --}}
-        <form method="GET" action="{{ route('laporan_kegiatan.rekap_triwulan') }}"
-            style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+    {{-- HEADER --}}
+    <div class="page-header">
+        <div>
+            <h1>Rekap Triwulan {{ $triwulan }} Tahun {{ $tahun }}</h1>
+            <p class="page-subtitle">Ringkasan laporan kegiatan ASN</p>
+        </div>
+    </div>
 
-            {{-- TRI WULAN --}}
-            <select name="triwulan">
-                @for ($i = 1; $i <= 4; $i++)
-                    <option value="{{ $i }}" {{ $triwulan == $i ? 'selected' : '' }}>
-                        Triwulan {{ $i }}
-                    </option>
-                @endfor
-            </select>
 
-            {{-- TAHUN --}}
-            <input type="number" name="tahun" value="{{ $tahun }}" style="width:100px">
+    {{-- FILTER CARD --}}
+    <div class="card mb-6">
 
-            {{-- 🔥 DROPDOWN KEGIATAN --}}
-            <select name="kegiatan_id">
-                <option value="">Semua Kegiatan</option>
-                @foreach ($daftarKegiatan as $kegiatan)
-                    <option value="{{ $kegiatan->id }}"
-                        {{ $kegiatanId == $kegiatan->id ? 'selected' : '' }}>
-                        {{ $kegiatan->nama_kegiatan }}
-                    </option>
-                @endforeach
-            </select>
+        <form method="GET"
+              action="{{ route('rekap.triwulan') }}"
+              class="filter-bar">
 
-            <button type="submit">Tampilkan</button>
+            <div class="filter-group">
 
-            {{-- 🔥 TOMBOL EXPORT EXCEL --}}
-            <a href="{{ route('rekap_triwulan.export', request()->query()) }}"
-            style="
-                    margin-left:auto;
-                    background:#16a34a;
-                    color:white;
-                    padding:8px 14px;
-                    border-radius:6px;
-                    text-decoration:none;
-                    font-weight:bold;
-            ">
-            ⬇️ Export Excel
+                {{-- TRI WULAN --}}
+                <select name="triwulan" class="form-input small">
+                    @for ($i = 1; $i <= 4; $i++)
+                        <option value="{{ $i }}" {{ $triwulan == $i ? 'selected' : '' }}>
+                            Triwulan {{ $i }}
+                        </option>
+                    @endfor
+                </select>
+
+                {{-- TAHUN --}}
+                <input type="number"
+                       name="tahun"
+                       value="{{ $tahun }}"
+                       class="form-input small"
+                       style="width:120px;">
+
+                {{-- KEGIATAN --}}
+                <select name="kegiatan_id" class="form-input small">
+                    <option value="">Semua Kegiatan</option>
+                    @foreach ($daftarKegiatan as $kegiatan)
+                        <option value="{{ $kegiatan->id }}"
+                            {{ $kegiatanId == $kegiatan->id ? 'selected' : '' }}>
+                            {{ $kegiatan->nama_kegiatan }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="btn-primary small">
+                    Tampilkan
+                </button>
+
+            </div>
+
+            {{-- EXPORT --}}
+            <a href="{{ route('rekap.triwulan.export', request()->query()) }}"
+               class="btn-success">
+                ⬇ Export Excel
             </a>
+
         </form>
 
-        {{-- TABEL --}}
-        <table class="w-full border-collapse border">
-            <thead class="bg-gray-100">
+    </div>
+
+
+    {{-- TABLE --}}
+    <div class="card">
+
+        <table class="table-modern">
+
+            <thead>
                 <tr>
-                    <th class="border p-2 w-12">No</th>
-                    <th class="border p-2 w-40">Tanggal</th>
-                    <th class="border p-2">Judul Kegiatan</th>
-                    <th class="border p-2">Uraian Kegiatan</th>
+                    <th style="width:60px;">No</th>
+                    <th style="width:180px;">Tanggal</th>
+                    <th>Judul Kegiatan</th>
+                    <th>Uraian Kegiatan</th>
                 </tr>
             </thead>
+
             <tbody>
                 @forelse ($data as $i => $row)
                     <tr>
-                        <td class="border p-2 text-center">
-                            {{ $i + 1 }}
-                        </td>
-                        <td class="border p-2">
+                        <td>{{ $i + 1 }}</td>
+
+                        <td>
                             {{ \Carbon\Carbon::parse($row->tanggal)->translatedFormat('d F Y') }}
                         </td>
-                        <td class="border p-2">
-                            {{ $row->kegiatan->nama_kegiatan }}
+
+                        <td>
+                            <span class="badge-name">
+                                {{ $row->kegiatan->nama_kegiatan }}
+                            </span>
                         </td>
-                        <td class="border p-2">
+
+                        <td>
                             {{ $row->uraian }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4"
-                            class="border p-4 text-center text-gray-500">
-                            Tidak ada data rekap triwulan
+                        <td colspan="4" class="empty-state">
+                            Tidak ada data rekap triwulan.
                         </td>
                     </tr>
                 @endforelse
             </tbody>
+
         </table>
 
     </div>
+
+</div>
+
 @endsection
+

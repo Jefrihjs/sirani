@@ -3,56 +3,99 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\LaporanKegiatan;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $bulan = now()->month;
-        $tahun = now()->year;
+        
+    $userId = auth()->user()->id;
 
-        $query = LaporanKegiatan::with('kegiatan')
-            ->where('user_id', auth()->user()->id)
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun);
+        // ================= KPI =================
+        $totalMenit = DB::table('laporan_kegiatan')
+            ->where('user_id', $userId)
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->sum('durasi_menit');
 
-        $totalMenit = $query->sum('durasi_menit');
+            $targetMenit = 6000;
 
-        $target = 6000;
-        $sisa = max($target - $totalMenit, 0);
-        $persen = $target > 0 ? round(($totalMenit / $target) * 100, 2) : 0;
+            $persenKPI = $targetMenit > 0
+                ? min(100, round(($totalMenit / $targetMenit) * 100))
+                : 0;
 
-        // 🔥 STATUS CAPAIAN
-        if ($persen >= 80) {
-            $statusText = 'Aman';
-            $statusColor = '#16a34a'; // hijau
-        } elseif ($persen >= 50) {
-            $statusText = 'Perlu Dikejar';
-            $statusColor = '#f59e0b'; // kuning
-        } else {
-            $statusText = 'Kritis';
-            $statusColor = '#dc2626'; // merah
-        }
+            if ($persenKPI >= 100) {
+                $status = 'Tercapai';
+            } elseif ($persenKPI >= 75) {
+                $status = 'On Track';
+            } elseif ($persenKPI >= 50) {
+                $status = 'Perlu Ditingkatkan';
+            } else {
+                $status = 'Belum Optimal';
+            }
 
-        // 🔥 KEGIATAN TERAKHIR (5 DATA)
-        $kegiatanTerakhir = LaporanKegiatan::with('kegiatan')
-            ->where('user_id', auth()->user()->id)
-            ->orderBy('tanggal', 'desc')
-            ->orderBy('jam_mulai', 'desc')
+
+        $jumlahLaporan = DB::table('laporan_kegiatan')
+            ->where('user_id', $userId)
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->count();
+
+        $targetMenit = 6000;
+
+        $persenKPI = $targetMenit > 0
+            ? min(100, round(($totalMenit / $targetMenit) * 100))
+            : 0;
+
+
+        // ================= KEGIATAN TERAKHIR =================
+        $kegiatanTerakhir = DB::table('laporan_kegiatan')
+            ->join(
+                'master_kegiatan',
+                'laporan_kegiatan.master_kegiatan_id',
+                '=',
+                'master_kegiatan.id'
+            )
+            ->where('laporan_kegiatan.user_id', auth()->user()->id)
+            ->orderBy('laporan_kegiatan.tanggal', 'desc')
             ->limit(5)
+            ->select(
+                'master_kegiatan.nama_kegiatan',
+                'laporan_kegiatan.tanggal',
+                'laporan_kegiatan.jam_mulai',
+                'laporan_kegiatan.jam_selesai',
+                'laporan_kegiatan.durasi_menit'
+            )
             ->get();
 
-        return view('dashboard.index', compact(
-            'totalMenit',
-            'target',
-            'sisa',
-            'persen',
-            'kegiatanTerakhir',
-            'statusText',
-            'statusColor'
-        ));
+            $grafikBulanan = DB::table('laporan_kegiatan')
+                ->selectRaw('MONTH(tanggal) as bulan, SUM(durasi_menit) as total_menit')
+                ->where('user_id', auth()->user()->id)
+                ->whereYear('tanggal', now()->year)
+                ->groupByRaw('MONTH(tanggal)')
+                ->orderByRaw('MONTH(tanggal)')
+                ->get();
+
+            // Siapkan array 12 bulan (default 0)
+            $dataGrafik = array_fill(1, 12, 0);
+
+            foreach ($grafikBulanan as $row) {
+                $dataGrafik[$row->bulan] = (int) $row->total_menit;
+            }
+
+            $dataGrafik = array_values($dataGrafik);
+
+            return view('dashboard.index', compact(
+                'totalMenit',
+                'jumlahLaporan',
+                'status',
+                'kegiatanTerakhir',
+                'persenKPI',
+                'targetMenit',
+                'dataGrafik'
+            ));
 
     }
 }

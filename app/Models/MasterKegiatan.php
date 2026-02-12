@@ -12,7 +12,21 @@ class MasterKegiatan extends Model
     protected $table = 'master_kegiatan';
 
     protected $fillable = [
+        'user_id',          // ← WAJIB ditambahkan
         'nama_kegiatan',
         'aktif',
+        'is_global',
     ];
+
+    // Relasi ke user pemilik kegiatan
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relasi ke laporan kegiatan
+    public function laporanKegiatan()
+    {
+        return $this->hasMany(LaporanKegiatan::class);
+    }
 }

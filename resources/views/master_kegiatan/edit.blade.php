@@ -1,35 +1,46 @@
 @extends('layouts.dashboard')
 
+@section('title', 'Edit Master Kegiatan')
+
 @section('content')
-<h2 class="font-semibold text-xl text-gray-800">
-            Edit Master Kegiatan
-        </h2>
 
-    <div class="py-6 px-6 max-w-xl">
+<div class="form-wrapper">
+
+    {{-- HEADER --}}
+    <div class="form-header">
+        <div>
+            <h1>Edit Master Kegiatan</h1>
+            <p class="form-subtitle">Perbarui informasi kegiatan Anda</p>
+        </div>
+
+        <a href="{{ route('master-kegiatan.index') }}" class="link-back">
+            ← Kembali
+        </a>
+    </div>
+
+
+    {{-- CARD --}}
+    <div class="form-card">
+
         <form method="POST"
-              action="{{ route('master-kegiatan.update', $row->id) }}"
-              class="bg-white p-6 rounded shadow">
-
+              action="{{ route('master-kegiatan.update', $row->id) }}">
             @csrf
             @method('PUT')
 
-            <div class="mb-4">
-                <label class="block mb-1 font-semibold">
-                    Nama Kegiatan
-                </label>
+            {{-- Nama --}}
+            <div class="form-group">
+                <label class="form-label">Nama Kegiatan</label>
                 <input type="text"
                        name="nama_kegiatan"
                        value="{{ old('nama_kegiatan', $row->nama_kegiatan) }}"
-                       class="w-full border rounded px-3 py-2"
+                       class="form-input"
                        required>
             </div>
 
-            <div class="mb-4">
-                <label class="block mb-1 font-semibold">
-                    Status
-                </label>
-                <select name="aktif"
-                        class="w-full border rounded px-3 py-2">
+            {{-- Status --}}
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="aktif" class="form-input">
                     <option value="1" {{ $row->aktif ? 'selected' : '' }}>
                         Aktif
                     </option>
@@ -39,17 +50,22 @@
                 </select>
             </div>
 
-            <div class="flex gap-2">
-                <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded">
-                    Simpan
+            {{-- Actions --}}
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    Simpan Perubahan
                 </button>
 
                 <a href="{{ route('master-kegiatan.index') }}"
-                   class="px-4 py-2 bg-gray-300 rounded">
+                   class="btn-secondary">
                     Batal
                 </a>
             </div>
+
         </form>
+
     </div>
+
+</div>
+
 @endsection

@@ -110,7 +110,6 @@
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
-
 *,
 ::before,
 ::after {
@@ -1630,5 +1629,31 @@ input:where([type='file']):focus {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity, 1));
   }
+}
+
+:root {
+    --text-light: #f8fafc;
+    --text-light-soft: rgba(248,250,252,.85);
+    --text-dark: #1e293b;
+    --text-dark-soft: #475569;
+}
+
+.dashboard-hero,
+.dashboard-hero * {
+    color: #f8fafc !important;
+}
+
+.dashboard-hero p {
+    color: rgba(248,250,252,.85) !important;
+}
+
+.sidebar,
+.sidebar a,
+.sidebar .text {
+    color: rgba(248,250,252,.85) !important;
+}
+
+.sidebar a.active {
+    color: #ffffff !important;
 }
 
