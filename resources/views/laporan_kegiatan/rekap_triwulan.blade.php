@@ -81,8 +81,9 @@
                 <tr>
                     <th style="width:60px;">No</th>
                     <th style="width:180px;">Tanggal</th>
-                    <th>Judul Kegiatan</th>
+                    <th>Nama Kegiatan</th>
                     <th>Uraian Kegiatan</th>
+                    <th>Keterangan</th>
                 </tr>
             </thead>
 
@@ -96,18 +97,20 @@
                         </td>
 
                         <td>
-                            <span class="badge-name">
-                                {{ $row->kegiatan->nama_kegiatan }}
-                            </span>
+                            {{ $row->kegiatan->nama_kegiatan ?? '-' }}
                         </td>
 
                         <td>
                             {{ $row->uraian }}
                         </td>
+
+                        <td>
+                            {{ $row->tempat ?? '-' }}
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="empty-state">
+                        <td colspan="5" class="empty-state">
                             Tidak ada data rekap triwulan.
                         </td>
                     </tr>

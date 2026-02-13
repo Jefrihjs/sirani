@@ -21,10 +21,11 @@
         <div class="profile-avatar">
             <img
                 src="{{ auth()->user()->photo
-                    ? asset('storage/' . auth()->user()->photo)
+                    ? asset('storage/' . auth()->user()->photo) . '?v=' . time()
                     : 'https://ui-avatars.com/api/?size=200&name=' . urlencode(auth()->user()->name)
                 }}"
                 alt="Foto Profil">
+
         </div>
 
         <div class="profile-info">

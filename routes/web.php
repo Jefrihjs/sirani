@@ -69,20 +69,20 @@ Route::middleware(['auth'])->group(function () {
         [LaporanKegiatanController::class, 'pdf']
     )->name('laporan_kegiatan.pdf');
 
+    
     // FOTO MANAGEMENT
     Route::delete(
         'laporan_kegiatan/{laporan}/foto/{index}',
         [LaporanKegiatanController::class, 'hapusFoto']
     );
 
-    Route::post(
-        'laporan_kegiatan/{laporan}/foto/{index}/replace',
-        [LaporanKegiatanController::class, 'replaceFoto']
+    Route::post('/laporan_kegiatan/{id}/foto/tambah',
+    [LaporanKegiatanController::class, 'tambahFoto']
     );
 
     Route::post(
-        'laporan_kegiatan/{laporan}/foto/tambah',
-        [LaporanKegiatanController::class, 'tambahFoto']
+        'laporan_kegiatan/{laporan}/foto/{index}/replace',
+        [LaporanKegiatanController::class, 'updateFoto']
     );
 
     // =======================
@@ -160,3 +160,8 @@ Route::get('/', function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');

@@ -21,13 +21,13 @@ class CreateAsnProfilesTable extends Migration
                 ->cascadeOnDelete();
 
             $table->string('jabatan', 100);
-            $table->enum('jenis_jabatan', ['Struktural', 'Fungsional', 'Pelaksana']);
+            $table->enum('jenis_jabatan', ['Struktural', 'Fungsional', 'Pelaksana'])->nullable();
 
             $table->string('unit_kerja', 150);
             $table->string('unit_teknis', 150)->nullable();
 
             $table->string('golongan_ruang', 20);
-            $table->enum('status_kepegawaian', ['PNS', 'PPPK']);
+            $table->enum('status_kepegawaian', ['PNS', 'PPPK'])->nullable();
 
             $table->foreignId('atasan_id')
                 ->nullable()

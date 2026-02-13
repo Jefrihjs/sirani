@@ -17,6 +17,7 @@ class LaporanKegiatan extends Model
         'tanggal',
         'jam_mulai',
         'jam_selesai',
+        'durasi_menit',
         'tempat',
         'uraian',
         'foto',

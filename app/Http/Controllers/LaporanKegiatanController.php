@@ -208,15 +208,21 @@ class LaporanKegiatanController extends Controller
         $request->validate([
             'master_kegiatan_id' => 'required|exists:master_kegiatan,id',
             'tanggal' => 'required|date',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
             'tempat' => 'required|string|max:255',
             'uraian' => 'required|string',
         ]);
 
-        $mulai   = Carbon::parse($request->jam_mulai);
-        $selesai = Carbon::parse($request->jam_selesai);
+        $mulai   = Carbon::createFromFormat('H:i', substr($request->jam_mulai, 0, 5));
+        $selesai = Carbon::createFromFormat('H:i', substr($request->jam_selesai, 0, 5));
+
+        if ($selesai->lessThan($mulai)) {
+            $selesai->addDay();
+        }
+
         $durasiMenit = $mulai->diffInMinutes($selesai);
+
 
         // CEK BENTROK (KECUALI DIRI SENDIRI)
         $bentrok = LaporanKegiatan::where('user_id', auth()->user()->id)
@@ -268,6 +274,97 @@ class LaporanKegiatanController extends Controller
             ->route('laporan_kegiatan.index')
             ->with('success', 'Laporan berhasil dihapus');
     }
+
+    public function tambahFoto(Request $request, $id)
+    {
+        $request->validate([
+            'foto' => 'required|image|max:1024'
+        ]);
+
+        $laporan = LaporanKegiatan::findOrFail($id);
+
+        $path = $request->file('foto')->store('laporan_kegiatan', 'public');
+
+        $foto = $laporan->foto ?? [];
+        $foto[] = $path;
+
+        $laporan->update([
+            'foto' => $foto
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function hapusFoto($laporanId, $index)
+    {
+        $laporan = LaporanKegiatan::where('id', $laporanId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $foto = $laporan->foto ?? [];
+
+        // minimal 2 foto tidak boleh dihapus
+        if (count($foto) <= 2) {
+            return response()->json([
+                'message' => 'Minimal 2 foto wajib.'
+            ], 422);
+        }
+
+        if (!isset($foto[$index])) {
+            return response()->json([
+                'message' => 'Foto tidak ditemukan.'
+            ], 404);
+        }
+
+        // hapus file dari storage
+        Storage::disk('public')->delete($foto[$index]);
+
+        // hapus dari array
+        unset($foto[$index]);
+
+        // reindex array supaya rapi
+        $foto = array_values($foto);
+
+        $laporan->update([
+            'foto' => $foto
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateFoto(Request $request, $laporanId, $index)
+    {
+        $request->validate([
+            'foto' => 'required|image|max:1024'
+        ]);
+
+        $laporan = LaporanKegiatan::where('id', $laporanId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $foto = $laporan->foto ?? [];
+
+        if (!isset($foto[$index])) {
+            return response()->json([
+                'message' => 'Foto tidak ditemukan.'
+            ], 404);
+        }
+
+        // hapus file lama
+        Storage::disk('public')->delete($foto[$index]);
+
+        // simpan file baru
+        $path = $request->file('foto')->store('laporan_kegiatan', 'public');
+
+        $foto[$index] = $path;
+
+        $laporan->update([
+            'foto' => $foto
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
 
     public function pdf($id)
     {

@@ -1,17 +1,29 @@
 @extends('layouts.dashboard')
 
-@section('content')
-        <h2 class="font-semibold text-xl text-gray-800">
-            Edit Laporan Kegiatan
-        </h2>
-    <div class="p-6">
+@section('title', 'Edit Laporan')
 
-        {{-- ERROR --}}
+@section('content')
+
+<div class="form-wrapper">
+
+    <div class="form-header">
+        <div>
+            <h1>Edit Laporan Kegiatan</h1>
+            <p class="form-subtitle">Perbarui laporan kegiatan Anda</p>
+        </div>
+
+        <a href="{{ route('laporan_kegiatan.index') }}" class="link-back">
+            ← Kembali
+        </a>
+    </div>
+
+    <div class="form-card">
+
         @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            <div class="alert-danger mb-6">
                 <ul>
                     @foreach ($errors->all() as $error)
-                        <li>- {{ $error }}</li>
+                        <li>• {{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
@@ -23,176 +35,280 @@
             @csrf
             @method('PUT')
 
-            {{-- KEGIATAN --}}
-            <div class="mb-4">
-                <label class="font-semibold">Nama Kegiatan</label>
-                <select name="master_kegiatan_id" class="w-full border p-2 rounded" required>
-                    @foreach ($kegiatan as $k)
-                        <option value="{{ $k->id }}"
-                            {{ old('master_kegiatan_id', $laporan->master_kegiatan_id) == $k->id ? 'selected' : '' }}>
-                            {{ $k->nama_kegiatan }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <div class="form-grid-2">
 
-            {{-- TANGGAL --}}
-            <div class="mb-4">
-                <label class="font-semibold">Tanggal</label>
-                <input type="date" name="tanggal"
-                       value="{{ old('tanggal', $laporan->tanggal) }}"
-                       class="w-full border p-2 rounded" required>
-            </div>
-
-            {{-- JAM --}}
-            <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="font-semibold">Jam Mulai</label>
-                    <input type="time" name="jam_mulai"
+                    <label class="form-label">Nama Kegiatan</label>
+                    <select name="master_kegiatan_id" class="form-input" required>
+                        @foreach ($kegiatan as $k)
+                            <option value="{{ $k->id }}"
+                                {{ old('master_kegiatan_id', $laporan->master_kegiatan_id) == $k->id ? 'selected' : '' }}>
+                                {{ $k->nama_kegiatan }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label">Tanggal</label>
+                    <input type="date"
+                           name="tanggal"
+                           value="{{ old('tanggal', $laporan->tanggal) }}"
+                           class="form-input"
+                           required>
+                </div>
+
+                <div>
+                    <label class="form-label">Jam Mulai</label>
+                    <input type="time"
+                           name="jam_mulai"
                            value="{{ old('jam_mulai', $laporan->jam_mulai) }}"
-                           class="w-full border p-2 rounded" required>
+                           class="form-input"
+                           required>
                 </div>
+
                 <div>
-                    <label class="font-semibold">Jam Selesai</label>
-                    <input type="time" name="jam_selesai"
+                    <label class="form-label">Jam Selesai</label>
+                    <input type="time"
+                           name="jam_selesai"
                            value="{{ old('jam_selesai', $laporan->jam_selesai) }}"
-                           class="w-full border p-2 rounded" required>
+                           class="form-input"
+                           required>
                 </div>
+
+                <div>
+                    <label class="form-label">Tempat</label>
+                    <input type="text"
+                           name="tempat"
+                           value="{{ old('tempat', $laporan->tempat) }}"
+                           class="form-input"
+                           required>
+                </div>
+
             </div>
 
-            {{-- TEMPAT --}}
-            <div class="mb-4">
-                <label class="font-semibold">Tempat</label>
-                <input type="text" name="tempat"
-                       value="{{ old('tempat', $laporan->tempat) }}"
-                       class="w-full border p-2 rounded" required>
-            </div>
-
-            {{-- URAIAN --}}
-            <div class="mb-6">
-                <label class="font-semibold">Uraian</label>
-                <textarea name="uraian" rows="4"
-                          class="w-full border p-2 rounded"
+            <div class="mt-6">
+                <label class="form-label">Uraian</label>
+                <textarea name="uraian"
+                          rows="4"
+                          class="form-input"
                           required>{{ old('uraian', $laporan->uraian) }}</textarea>
             </div>
 
-            {{-- FOTO --}}
-            <div class="mb-6">
-                <label class="font-semibold block mb-2">Foto Kegiatan</label>
+            <div class="mt-8">
+                <label class="form-label block mb-4">Foto Kegiatan</label>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="photo-grid">
                     @foreach (($laporan->foto ?? []) as $index => $foto)
-                        <div class="relative border rounded overflow-hidden h-48 bg-black">
+                        <div class="photo-item">
 
-                            <img src="{{ asset('storage/'.$foto) }}"
-                                class="w-full h-full object-cover pointer-events-none">
+                            <img src="{{ asset('storage/'.$foto) }}">
 
-                            {{-- FOTO 1 & 2 --}}
                             @if ($index < 2)
                                 <button type="button"
-                                    onclick="gantiFoto({{ $laporan->id }}, {{ $index }})"
-                                    class="absolute bottom-2 right-2 z-30
-                                        bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                                    Ubah Foto
+                                        onclick="gantiFoto({{ $laporan->id }}, {{ $index }})"
+                                        class="btn-photo-edit">
+                                    Ubah
                                 </button>
                             @endif
 
-                            {{-- FOTO 3+ --}}
                             @if ($index >= 2)
                                 <button type="button"
-                                    onclick="hapusFoto({{ $laporan->id }}, {{ $index }})"
-                                    class="absolute top-2 right-2 z-30
-                                        bg-red-600 text-white w-8 h-8
-                                        rounded-full text-lg leading-8 text-center">
+                                        onclick="hapusFoto({{ $laporan->id }}, {{ $index }})"
+                                        class="btn-photo-delete">
                                     ×
                                 </button>
                             @endif
+
                         </div>
                     @endforeach
 
-                    {{-- TAMBAH FOTO --}}
                     <div onclick="tambahFoto({{ $laporan->id }})"
-                        class="h-48 border-2 border-dashed rounded
-                                flex items-center justify-center
-                                cursor-pointer bg-gray-50">
-                        <span class="text-4xl text-gray-400">+</span>
+                         class="photo-add">
+                        +
                     </div>
                 </div>
 
-                <small class="text-gray-500 block mt-2">
+                <small class="form-hint">
                     * Minimal 2 foto wajib. Foto ke-3 dst bisa dihapus.
                 </small>
             </div>
 
-            {{-- TOMBOL AKSI --}}
-            <div class="flex justify-end gap-3 mt-8">
+            <div class="form-actions mt-8">
                 <a href="{{ route('laporan_kegiatan.index') }}"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                   class="btn-secondary">
                     Batal
                 </a>
 
-                <button type="submit"
-                    class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                <button type="submit" class="btn-save">
                     Update
                 </button>
             </div>
 
         </form>
 
+    </div>
 
-    {{-- INPUT TERSEMBUNYI --}}
-    <input type="file" id="fileGanti" hidden accept="image/*">
-    <input type="file" id="fileTambah" hidden accept="image/*">
+</div>
 
-    <script>
-        let laporanId = null;
-        let fotoIndex = null;
+<input type="file" id="fileGanti" hidden accept="image/*">
+<input type="file" id="fileTambah" hidden accept="image/*">
 
-        function gantiFoto(id, index) {
-            laporanId = id;
-            fotoIndex = index;
-            document.getElementById('fileGanti').click();
+<script>
+let laporanId = null;
+let fotoIndex = null;
+
+function gantiFoto(id, index) {
+    laporanId = id;
+    fotoIndex = index;
+    document.getElementById('fileGanti').click();
+}
+
+function tambahFoto(id) {
+    laporanId = id;
+    document.getElementById('fileTambah').click();
+}
+
+function hapusFoto(id, index) {
+    if (!confirm('Hapus foto ini?')) return;
+
+    fetch(`/laporan_kegiatan/${id}/foto/${index}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (!response.ok) {
+            alert('Gagal');
+            return;
         }
 
-        document.getElementById('fileGanti').addEventListener('change', function () {
-            if (!this.files.length) return;
+        const msg = document.createElement('div');
+                msg.innerText = 'Foto berhasil dihapus';
+                msg.style.position = 'fixed';
+                msg.style.top = '20px';
+                msg.style.right = '20px';
+                msg.style.background = '#16a34a';
+                msg.style.color = '#fff';
+                msg.style.padding = '10px 15px';
+                msg.style.borderRadius = '6px';
+                msg.style.zIndex = '9999';
+
+                document.body.appendChild(msg);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+
+    const fileGanti = document.getElementById('fileGanti');
+    const fileTambah = document.getElementById('fileTambah');
+
+    function validateFile(fileInput) {
+        if (!fileInput.files.length) return false;
+
+        const file = fileInput.files[0];
+
+        if (file.size > MAX_SIZE) {
+            alert('Ukuran file melebihi 1 MB. Silakan pilih foto yang lebih kecil.');
+            fileInput.value = '';
+            return false;
+        }
+
+        return file;
+    }
+
+    if (fileGanti) {
+        fileGanti.addEventListener('change', function () {
+
+            const file = validateFile(this);
+            if (!file) return;
+
             let fd = new FormData();
-            fd.append('foto', this.files[0]);
+            fd.append('foto', file);
 
             fetch(`/laporan_kegiatan/${laporanId}/foto/${fotoIndex}/replace`, {
                 method: 'POST',
-                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
-                body: fd
-            }).then(r => r.ok ? location.reload() : alert('Gagal'));
-        });
-
-        function tambahFoto(id) {
-            laporanId = id;
-            document.getElementById('fileTambah').click();
-        }
-
-        document.getElementById('fileTambah').addEventListener('change', function () {
-            if (!this.files.length) return;
-            let fd = new FormData();
-            fd.append('foto', this.files[0]);
-
-            fetch(`/laporan_kegiatan/${laporanId}/foto/tambah`, {
-                method: 'POST',
-                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
-                body: fd
-            }).then(r => r.ok ? location.reload() : alert('Gagal'));
-        });
-
-        function hapusFoto(id, index) {
-            if (!confirm('Hapus foto ini?')) return;
-
-            fetch(`/laporan_kegiatan/${id}/foto/${index}`, {
-                method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json'
+                },
+                body: fd
+            }).then(response => {
+                if (!response.ok) {
+                    alert('Upload gagal');
+                    return;
                 }
-            }).then(r => r.ok ? location.reload() : alert('Gagal'));
-        }
-    </script>
+
+                const msg = document.createElement('div');
+                msg.innerText = 'Foto berhasil diubah';
+                msg.style.position = 'fixed';
+                msg.style.top = '20px';
+                msg.style.right = '20px';
+                msg.style.background = '#16a34a';
+                msg.style.color = '#fff';
+                msg.style.padding = '10px 15px';
+                msg.style.borderRadius = '6px';
+                msg.style.zIndex = '9999';
+
+                document.body.appendChild(msg);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+            });
+        });
+    }
+
+    if (fileTambah) {
+        fileTambah.addEventListener('change', function () {
+
+            const file = validateFile(this);
+            if (!file) return;
+
+            let fd = new FormData();
+            fd.append('foto', file);
+
+            fetch(`/laporan_kegiatan/${laporanId}/foto/tambah`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: fd
+            }).then(response => {
+                if (!response.ok) {
+                    alert('Upload gagal');
+                    return;
+                }
+
+                const msg = document.createElement('div');
+                msg.innerText = 'Foto berhasil ditambahkan';
+                msg.style.position = 'fixed';
+                msg.style.top = '20px';
+                msg.style.right = '20px';
+                msg.style.background = '#16a34a';
+                msg.style.color = '#fff';
+                msg.style.padding = '10px 15px';
+                msg.style.borderRadius = '6px';
+                msg.style.zIndex = '9999';
+
+                document.body.appendChild(msg);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+            });
+        });
+    }
+});
+
+</script>
+
 @endsection

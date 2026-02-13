@@ -38,14 +38,13 @@
 
             {{-- FOTO PROFIL --}}
             <div class="photo-section">
-
                 @php
                     $photoPath = $user->photo
                         ? storage_path('app/public/' . $user->photo)
                         : null;
 
                     $photoUrl = $user->photo && file_exists($photoPath)
-                        ? asset('storage/' . $user->photo) . '?v=' . filemtime($photoPath)
+                        ? asset('storage/' . $user->photo) . '?v=' . filemtime(storage_path('app/public/'.$user->photo))
                         : 'https://ui-avatars.com/api/?size=200&name=' . urlencode($user->name);
                 @endphp
 

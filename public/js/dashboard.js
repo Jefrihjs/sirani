@@ -13,7 +13,11 @@ function toggleProfileMenu() {
 
 document.addEventListener('click', function(e) {
     const profile = document.getElementById('profileMenu');
+
+    if (!profile) return; // 🔥 penting
+
     if (!e.target.closest('.profile')) {
         profile.style.display = 'none';
     }
 });
+

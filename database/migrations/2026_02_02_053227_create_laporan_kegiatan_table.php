@@ -17,8 +17,10 @@ class CreateLaporanKegiatanTable extends Migration
             $table->time('jam_selesai');
             $table->string('tempat');
             $table->text('uraian');
+            $table->json('foto')->nullable();
             $table->timestamps();
         });
+
     }
 
     public function down()

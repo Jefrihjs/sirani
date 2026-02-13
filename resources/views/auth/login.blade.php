@@ -63,12 +63,13 @@
             <button type="submit" class="btn-login">
                 Masuk
             </button>
-
+        {{--
             <div class="login-footer">
                 <a href="{{ route('password.request') }}">
                     Lupa password?
                 </a>
             </div>
+            --}}
         </form>
 
     </div>

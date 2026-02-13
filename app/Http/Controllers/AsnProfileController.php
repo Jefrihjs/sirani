@@ -76,9 +76,8 @@ class AsnProfileController extends Controller
 
             Storage::disk('public')->put($path, (string) $image);
 
-            $user->update([
-                'photo' => $path
-            ]);
+            $user->photo = $path;
+            $user->save();
         }
 
         /* ===== DATA ASN ===== */

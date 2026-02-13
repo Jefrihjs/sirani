@@ -1,36 +1,42 @@
 <x-guest-layout>
-    <x-auth-card>
-        <x-slot name="logo">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-            </a>
-        </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-        </div>
+<div class="auth-page">
 
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="auth-container">
 
-        <!-- Validation Errors -->
-        <x-auth-validation-errors class="mb-4" :errors="$errors" />
+        <h2>Lupa Password</h2>
+        <p>Masukkan email untuk menerima link reset password.</p>
+
+        @if (session('status'))
+            <div class="alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('password.email') }}">
             @csrf
 
-            <!-- Email Address -->
-            <div>
-                <x-label for="email" :value="__('Email')" />
-
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email"
+                       name="email"
+                       value="{{ old('email') }}"
+                       required
+                       class="form-input">
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
+            <button type="submit" class="btn-primary full">
+                Kirim Link Reset
+            </button>
+
+            <div class="auth-footer">
+                <a href="{{ route('login') }}">← Kembali ke Login</a>
             </div>
+
         </form>
-    </x-auth-card>
+
+    </div>
+
+</div>
+
 </x-guest-layout>
