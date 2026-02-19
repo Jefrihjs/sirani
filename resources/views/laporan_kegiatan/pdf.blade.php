@@ -6,13 +6,15 @@
 
     <style>
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: sans-serif; /* DejaVu Sans sering bikin file PDF jadi berat, pakai sans-serif standar dulu */
             font-size: 12px;
+            line-height: 1.5;
         }
 
         h3 {
             text-align: center;
             margin-bottom: 20px;
+            text-transform: uppercase;
         }
 
         table {
@@ -23,42 +25,48 @@
 
         th, td {
             border: 1px solid #000;
-            padding: 6px;
+            padding: 8px;
             vertical-align: top;
+            text-align: left;
         }
 
         th {
-            background: #eee;
-            width: 30%;
+            background: #f2f2f2;
+            width: 25%;
         }
 
         .uraian {
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            text-align: justify;
         }
 
         .foto-table {
             width: 100%;
             border-collapse: collapse;
+            border: none;
         }
 
         .foto-table td {
             width: 50%;
             padding: 5px;
-            border: none;
+            border: none; /* Hilangkan border untuk grid foto */
+            text-align: center;
         }
 
         .foto {
             width: 100%;
+            max-width: 300px; /* Batasi ukuran agar tidak pecah */
+            height: auto;
             border: 1px solid #333;
+        }
+
+        /* Supaya uraian tidak terpotong ke halaman sebelah jika terlalu panjang */
+        .page-break {
+            page-break-after: always;
         }
     </style>
 </head>
 <body>
-
-@php
-    use Carbon\Carbon;
-@endphp
 
 <h3>LAPORAN KEGIATAN</h3>
 
@@ -82,44 +90,39 @@
 </table>
 
 <div class="uraian">
-    <strong>Uraian:</strong>
-    <p>{{ $laporan->uraian }}</p>
+    <strong>Uraian Kegiatan:</strong><br>
+    {{ $laporan->uraian }}
 </div>
 
-<strong>Foto Kegiatan:</strong>
-<br><br>
+<div style="margin-top: 20px;">
+    <strong>Foto Kegiatan:</strong>
+    <br><br>
 
-@if (is_array($laporan->foto) && count($laporan->foto))
-    <table class="foto-table">
-        <tr>
-        @foreach ($laporan->foto as $foto)
-            @php
-                $fullPath = storage_path('app/public/' . $foto);
+    @if (is_array($laporan->foto) && count($laporan->foto))
+        <div style="text-align: center;">
+            @foreach ($laporan->foto as $foto)
+                @php
+                    $path = public_path('storage/' . $foto);
+                    $base64 = '';
 
-                if (file_exists($fullPath)) {
-                    $ext = pathinfo($fullPath, PATHINFO_EXTENSION);
-                    $data = file_get_contents($fullPath);
-                    $base64 = 'data:image/' . $ext . ';base64,' . base64_encode($data);
-                } else {
-                    $base64 = null;
-                }
-            @endphp
+                    if (file_exists($path)) {
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $data = file_get_contents($path);
+                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                    }
+                @endphp
 
-            @if ($base64)
-                <td>
-                    <img src="{{ $base64 }}" class="foto">
-                </td>
-            @endif
-
-            @if ($loop->iteration % 2 == 0)
-                </tr><tr>
-            @endif
-        @endforeach
-        </tr>
-    </table>
-@else
-    <p>-</p>
-@endif
+                @if($base64)
+                    <div style="margin-bottom: 20px; page-break-inside: avoid;">
+                        <img src="{{ $base64 }}" style="width: 100%; max-width: 600px; border: 1px solid #333;">
+                    </div>
+                @endif
+            @endforeach
+        </div>
+    @else
+        <p>-</p>
+    @endif
+</div>
 
 </body>
 </html>

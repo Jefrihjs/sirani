@@ -31,6 +31,11 @@ body {
                  sans-serif;
 }
 
+img {
+    page-break-inside: avoid;
+    page-break-after: auto;
+}
+
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -72,6 +77,13 @@ body {
     border-radius: 50%;
     text-align: center;
     line-height: 28px;
+}
+
+.foto {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border: 1px solid #333;
 }
 
 .photo-add {
