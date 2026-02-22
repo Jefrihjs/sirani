@@ -17,8 +17,22 @@
 <div class="layout">
 
     @include('partials.sidebar')
-
+    <div id="mobileOverlay" class="mobile-overlay"></div>
     <main class="content">
+
+        <!-- MOBILE TOP BAR -->
+        <div class="mobile-topbar">
+            <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Toggle Menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
         @yield('content')
     </main>
 </div>
@@ -28,22 +42,21 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     /*
-    =========================
-    SIDEBAR COLLAPSE (WITH PERSIST)
-    =========================
+    =================================
+    SIDEBAR COLLAPSE (DESKTOP)
+    =================================
     */
 
     const sidebarBtn = document.getElementById('sidebarToggleBtn');
     const sidebar    = document.querySelector('.sidebar');
 
-    // === LOAD STATE SAAT REFRESH ===
-    if (localStorage.getItem('sidebarCollapsed') === 'true') {
+    // Load state saat refresh
+    if (sidebar && localStorage.getItem('sidebarCollapsed') === 'true') {
         sidebar.classList.add('collapsed');
     }
 
-    // 🔥 Jika sidebar dalam kondisi collapsed saat load,
-    // paksa semua dropdown tertutup
-    if (sidebar.classList.contains('collapsed')) {
+    // Jika collapsed saat load → tutup semua dropdown
+    if (sidebar && sidebar.classList.contains('collapsed')) {
         document.querySelectorAll('.menu-group')
             .forEach(group => group.classList.remove('open'));
     }
@@ -53,23 +66,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
             sidebar.classList.toggle('collapsed');
 
-            // Simpan state ke localStorage
             localStorage.setItem(
                 'sidebarCollapsed',
                 sidebar.classList.contains('collapsed')
             );
 
-            // Tutup semua dropdown saat collapse
             document.querySelectorAll('.menu-group')
                 .forEach(group => group.classList.remove('open'));
-            
+
         });
     }
 
+
     /*
-    =========================
-    DROPDOWN (Auto Close Others)
-    =========================
+    =================================
+    DROPDOWN MENU
+    =================================
     */
 
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
@@ -80,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const parent = this.closest('.menu-group');
 
-            // Tutup semua kecuali yang diklik
             document.querySelectorAll('.menu-group')
                 .forEach(group => {
                     if (group !== parent) {
@@ -88,14 +99,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-            // Toggle yang sekarang
             parent.classList.toggle('open');
 
         });
 
     });
 
-    // 👇 TAMBAHKAN DI SINI
     document.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', function () {
             const parent = this.closest('.menu-group');
@@ -105,12 +114,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+
+    /*
+    =================================
+    MOBILE SIDEBAR
+    =================================
+    */
+
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    if (mobileBtn && sidebar) {
+
+        mobileBtn.addEventListener('click', function () {
+
+            sidebar.classList.toggle('mobile-active');
+            mobileOverlay.classList.toggle('active');
+            document.body.classList.toggle('mobile-open');
+
+        });
+
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', function () {
+
+                sidebar.classList.remove('mobile-active');
+                mobileOverlay.classList.remove('active');
+                document.body.classList.remove('mobile-open');
+
+            });
+        }
+
+    }
+
 });
-
 </script>
-
-
-
 @stack('scripts')
 
 </body>

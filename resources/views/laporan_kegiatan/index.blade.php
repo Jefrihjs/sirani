@@ -62,80 +62,81 @@
 
     {{-- CARD --}}
     <div class="card">
+        <div class="scroll-hint">Geser tabel ke samping →</div>
+        <div class="table-responsive"> 
+            <table class="table-modern">
 
-        <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th style="width:130px;">Tanggal</th>
+                        <th>Kegiatan</th>
+                        <th style="width:160px;">Waktu</th>
+                        <th>Tempat</th>
+                        <th style="width:140px;">Aksi</th>
+                    </tr>
+                </thead>
 
-            <thead>
-                <tr>
-                    <th style="width:130px;">Tanggal</th>
-                    <th>Kegiatan</th>
-                    <th style="width:160px;">Waktu</th>
-                    <th>Tempat</th>
-                    <th style="width:140px;">Aksi</th>
-                </tr>
-            </thead>
+                <tbody>
+                    @forelse ($data as $row)
+                    <tr>
 
-            <tbody>
-                @forelse ($data as $row)
-                <tr>
+                        <td>{{ $row->tanggal }}</td>
 
-                    <td>{{ $row->tanggal }}</td>
+                        <td>
+                            {{ $row->kegiatan->nama_kegiatan }}
+                        </td>
 
-                    <td>
-                        {{ $row->kegiatan->nama_kegiatan }}
-                    </td>
+                        <td>
+                            {{ $row->jam_mulai }} – {{ $row->jam_selesai }}
+                        </td>
 
-                    <td>
-                        {{ $row->jam_mulai }} – {{ $row->jam_selesai }}
-                    </td>
+                        <td>
+                            {{ $row->tempat }}
+                        </td>
 
-                    <td>
-                        {{ $row->tempat }}
-                    </td>
+                        <td>
+                            <div class="action-group">
+                            <a href="{{ route('laporan_kegiatan.pdf', $row->id) }}"
+                            target="_blank"
+                            class="action-btn view"
+                            title="Preview">
+                                👁
+                            </a>
 
-                    <td>
-                        <div class="action-group">
-                        <a href="{{ route('laporan_kegiatan.pdf', $row->id) }}"
-                        target="_blank"
-                        class="action-btn view"
-                        title="Preview">
-                            👁
-                        </a>
+                            <a href="{{ route('laporan_kegiatan.edit', $row->id) }}"
+                            class="action-btn edit"
+                            title="Edit">
+                                ✏
+                            </a>
 
-                        <a href="{{ route('laporan_kegiatan.edit', $row->id) }}"
-                        class="action-btn edit"
-                        title="Edit">
-                            ✏
-                        </a>
+                            <form action="{{ route('laporan_kegiatan.destroy', $row->id) }}"
+                                method="POST"
+                                onsubmit="return confirm('Yakin hapus laporan ini?')">
+                                @csrf
+                                @method('DELETE')
 
-                        <form action="{{ route('laporan_kegiatan.destroy', $row->id) }}"
-                            method="POST"
-                            onsubmit="return confirm('Yakin hapus laporan ini?')">
-                            @csrf
-                            @method('DELETE')
+                                <button type="submit"
+                                        class="action-btn delete"
+                                        title="Hapus">
+                                    🗑
+                                </button>
+                            </form>
+                            </div>
 
-                            <button type="submit"
-                                    class="action-btn delete"
-                                    title="Hapus">
-                                🗑
-                            </button>
-                        </form>
-                        </div>
+                        </td>
 
-                    </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            Belum ada laporan bulan ini
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
 
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="empty-state">
-                        Belum ada laporan bulan ini
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-
-        </table>
-
+            </table>
+        </div>
     </div>
 
 </div>

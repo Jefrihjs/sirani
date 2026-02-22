@@ -67,47 +67,49 @@
 
     {{-- TABLE --}}
     <div class="card">
+        <div class="scroll-hint">Geser tabel ke samping →</div>
+       <div class="table-responsive"> 
+            <table class="table-modern">
 
-        <table class="table-modern">
-
-            <thead>
-                <tr>
-                    <th style="width:60px;">No</th>
-                    <th style="width:180px;">Tanggal</th>
-                    <th>Judul Kegiatan</th>
-                    <th>Uraian Kegiatan</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @forelse ($data as $i => $row)
+                <thead>
                     <tr>
-                        <td>{{ $i + 1 }}</td>
-
-                        <td>
-                            {{ \Carbon\Carbon::parse($row->tanggal)->translatedFormat('d F Y') }}
-                        </td>
-
-                        <td>
-                            <span class="badge-name">
-                                {{ $row->kegiatan->nama_kegiatan }}
-                            </span>
-                        </td>
-
-                        <td>
-                            {{ $row->uraian }}
-                        </td>
+                        <th style="width:60px;">No</th>
+                        <th style="width:180px;">Tanggal</th>
+                        <th>Judul Kegiatan</th>
+                        <th>Uraian Kegiatan</th>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="empty-state">
-                            Tidak ada data rekap tahunan.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
+                </thead>
 
-        </table>
+                <tbody>
+                    @forelse ($data as $i => $row)
+                        <tr>
+                            <td>{{ $i + 1 }}</td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($row->tanggal)->translatedFormat('d F Y') }}
+                            </td>
+
+                            <td>
+                                <span class="badge-name">
+                                    {{ $row->kegiatan->nama_kegiatan }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ $row->uraian }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                Tidak ada data rekap tahunan.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+
+            </table>
+        </div>
 
     </div>
 

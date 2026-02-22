@@ -36,89 +36,90 @@
 
     {{-- CARD --}}
     <div class="card">
+        <div class="scroll-hint">Geser tabel ke samping →</div>
+        <div class="table-responsive"> 
+            <table class="table-modern">
 
-        <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">No</th>
+                        <th>Nama Kegiatan</th>
+                        <th style="width:120px;">Status</th>
+                        <th style="width:120px;">Aksi</th>
+                    </tr>
+                </thead>
 
-            <thead>
-                <tr>
-                    <th style="width:70px;">No</th>
-                    <th>Nama Kegiatan</th>
-                    <th style="width:120px;">Status</th>
-                    <th style="width:120px;">Aksi</th>
-                </tr>
-            </thead>
+                <tbody>
+                    @forelse ($data as $i => $row)
+                    <tr>
 
-            <tbody>
-                @forelse ($data as $i => $row)
-                <tr>
+                        <td>{{ $i + 1 }}</td>
 
-                    <td>{{ $i + 1 }}</td>
-
-                    <td>
-                        <span class="badge-name">
-                            {{ $row->nama_kegiatan }}
-                        </span>
-
-                        @if($row->is_global)
-                            <span class="badge-global">Global</span>
-                        @else
-                            <span class="badge-personal">Personal</span>
-                        @endif
-                    </td>
-
-                    <td>
-                        @if($row->aktif)
-                            <span class="badge-success">
-                                Aktif
+                        <td>
+                            <span class="badge-name">
+                                {{ $row->nama_kegiatan }}
                             </span>
-                        @else
-                            <span class="badge-muted">
-                                Nonaktif
-                            </span>
-                        @endif
-                    </td>
 
-                    <td>
-                        <div class="action-group">
+                            @if($row->is_global)
+                                <span class="badge-global">Global</span>
+                            @else
+                                <span class="badge-personal">Personal</span>
+                            @endif
+                        </td>
 
-                            {{-- Edit --}}
-                            <a href="{{ route('master-kegiatan.edit', $row->id) }}"
-                            class="action-btn edit"
-                            title="Edit">
-                                ✏
-                            </a>
+                        <td>
+                            @if($row->aktif)
+                                <span class="badge-success">
+                                    Aktif
+                                </span>
+                            @else
+                                <span class="badge-muted">
+                                    Nonaktif
+                                </span>
+                            @endif
+                        </td>
 
-                            {{-- Hapus --}}
-                            <form action="{{ route('master-kegiatan.destroy', $row->id) }}"
-                                method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
+                        <td>
+                            <div class="action-group">
 
-                                <button type="submit"
-                                        class="action-btn delete"
-                                        title="Hapus"
-                                        onclick="return confirm('Yakin ingin menghapus kegiatan ini?')">
-                                    🗑
-                                </button>
-                            </form>
+                                {{-- Edit --}}
+                                <a href="{{ route('master-kegiatan.edit', $row->id) }}"
+                                class="action-btn edit"
+                                title="Edit">
+                                    ✏
+                                </a>
 
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty-state">
-                        Belum ada master kegiatan.
-                        <br>
-                        <small>Tambahkan kegiatan pertama Anda.</small>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
+                                {{-- Hapus --}}
+                                <form action="{{ route('master-kegiatan.destroy', $row->id) }}"
+                                    method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
 
-        </table>
+                                    <button type="submit"
+                                            class="action-btn delete"
+                                            title="Hapus"
+                                            onclick="return confirm('Yakin ingin menghapus kegiatan ini?')">
+                                        🗑
+                                    </button>
+                                </form>
 
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            Belum ada master kegiatan.
+                            <br>
+                            <small>Tambahkan kegiatan pertama Anda.</small>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+
+            </table>
+        </div>
     </div>
 
 </div>

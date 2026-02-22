@@ -11,15 +11,21 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        
-    $userId = auth()->user()->id;
 
         // ================= KPI =================
-        $totalMenit = DB::table('laporan_kegiatan')
-            ->where('user_id', $userId)
-            ->whereMonth('tanggal', now()->month)
-            ->whereYear('tanggal', now()->year)
-            ->sum('durasi_menit');
+            $userId = auth()->user()->id;
+
+            $totalMenit = DB::table('laporan_kegiatan')
+                ->where('user_id', $userId)
+                ->whereMonth('tanggal', now()->month)
+                ->whereYear('tanggal', now()->year)
+                ->sum('durasi_menit');
+
+            $jumlahLaporan = DB::table('laporan_kegiatan')
+                ->where('user_id', $userId)
+                ->whereMonth('tanggal', now()->month)
+                ->whereYear('tanggal', now()->year)
+                ->count();
 
             $targetMenit = 6000;
 
@@ -29,12 +35,16 @@ class DashboardController extends Controller
 
             if ($persenKPI >= 100) {
                 $status = 'Tercapai';
+                $badgeClass = 'badge-success';
             } elseif ($persenKPI >= 75) {
                 $status = 'On Track';
+                $badgeClass = 'badge-success';
             } elseif ($persenKPI >= 50) {
                 $status = 'Perlu Ditingkatkan';
+                $badgeClass = 'badge-warning';
             } else {
                 $status = 'Belum Optimal';
+                $badgeClass = 'badge-warning';
             }
 
 
@@ -92,6 +102,7 @@ class DashboardController extends Controller
                 'totalMenit',
                 'jumlahLaporan',
                 'status',
+                'badgeClass', 
                 'kegiatanTerakhir',
                 'persenKPI',
                 'targetMenit',
