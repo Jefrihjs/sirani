@@ -1,186 +1,147 @@
-<aside class="sidebar">
-    <div class="sidebar-top">
+{{-- Script Alpine.js agar Dropdown & Toggle PASTI jalan --}}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-        <div class="sidebar-header">
-            <img src="{{ asset('img/sirani-logo.png') }}"
-                class="sidebar-logo"
-                alt="SIRANI Logo">
+<aside id="sidebar" 
+    {{-- Logic Toggle & Dropdown digabung di sini --}}
+    x-data="{ 
+        isCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+        rekapOpen: {{ request()->routeIs('rekap.*') ? 'true' : 'false' }}, 
+        settingOpen: {{ request()->routeIs('profil.*', 'profile.security') ? 'true' : 'false' }},
+        toggle() {
+            this.isCollapsed = !this.isCollapsed;
+            localStorage.setItem('sidebarCollapsed', this.isCollapsed);
+            window.dispatchEvent(new CustomEvent('sidebar-toggled', { detail: this.isCollapsed }));
+        }
+    }"
+    {{-- Class Dinamis untuk lebar sidebar --}}
+    :class="isCollapsed ? 'w-20' : 'w-72'"
+    class="fixed left-0 top-0 h-screen bg-slate-900 text-white flex flex-col z-[100] border-r border-white/5 shadow-2xl transition-all duration-500 overflow-hidden group/sidebar">
+    
+    {{-- Cahaya Dekorasi --}}
+    <div class="absolute -top-20 -left-20 w-64 h-64 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            <span class="brand-text">SIRANI</span>
+    <div class="flex-1 overflow-y-auto custom-scrollbar relative z-10 overflow-x-hidden">
 
-            <button class="sidebar-toggle" id="sidebarToggleBtn" type="button">
-                <svg fill="#ffffff" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                    viewBox="0 0 512 512" xml:space="preserve">
-                <g>
-                    <g>
-                        <path d="M441.751,475.584L222.166,256L441.75,36.416c6.101-6.101,7.936-15.275,4.629-23.253C443.094,5.184,435.286,0,426.667,0
-                            H320.001c-5.675,0-11.093,2.24-15.083,6.251L70.251,240.917c-8.341,8.341-8.341,21.824,0,30.165l234.667,234.667
-                            c3.989,4.011,9.408,6.251,15.083,6.251h106.667c8.619,0,16.427-5.184,19.712-13.163
-                            C449.687,490.858,447.852,481.685,441.751,475.584z"/>
-                    </g>
-                </g>
+        {{-- HEADER: LOGO & TOMBOL TOGGLE --}}
+        <div class="p-6 mb-4 border-b border-white/5 bg-slate-950/30">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-2 bg-white rounded-2xl shadow-xl shrink-0">
+                        <img src="{{ asset('img/siceria-logo.png') }}" class="w-8 h-8 object-contain" alt="Logo">
+                    </div>
+                    {{-- Teks Brand Hilang kalau Collapsed --}}
+                    <h1 x-show="!isCollapsed" x-transition.opacity class="text-4xl font-black text-white tracking-tighter italic">
+                        Si<span class="text-blue-500">CERIA</span>
+                    </h1>
+                </div>
+            </div>
+
+            {{-- TOMBOL PANAH TOGGLE --}}
+            <button @click="toggle()" class="w-full flex items-center justify-center p-3 bg-white/5 hover:bg-blue-600 rounded-xl transition-all text-white shadow-inner">
+                <svg :class="isCollapsed ? 'rotate-180' : ''" class="w-5 h-5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                 </svg>
             </button>
         </div>
 
-
-        <nav class="menu">
-            {{-- Dashboard --}}
-            <a href="{{ route('dashboard') }}"
-               class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <span class="menu-icon"> 
-                    <svg fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.012,10.981,3,11H5v9a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V11h2a1,1,0,0,0,.555-1.832l-9-6a1,1,0,0,0-1.11,0l-9,6a1,1,0,0,0-.277,1.387A.98.98,0,0,0,3.012,10.981ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1v5H10Z"/></svg>
+        {{-- MENU UTAMA (ISI TETAP SAMA) --}}
+        <nav class="px-3 space-y-2 mt-4">
+    
+            {{-- 1. DASHBOARD --}}
+            <a href="{{ route('dashboard') }}" class="flex items-center space-x-4 px-4 py-4 rounded-2xl transition-all {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                <span class="w-6 h-6 shrink-0">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </span>
-                <span class="menu-text">Dashboard</span>
+                <span x-show="!isCollapsed" class="font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">Dashboard</span>
             </a>
 
-            {{-- Laporan Kegiatan --}}
-            <a href="{{ route('laporan_kegiatan.index') }}"
-               class="menu-item {{ request()->routeIs('laporan_kegiatan.*') ? 'active' : '' }}">
-                <span class="menu-icon">
-                    <svg fill="#ffffff" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                        viewBox="0 0 32 32" xml:space="preserve">
-                    <g>
-                        <path d="M20,8h-8c-0.6,0-1-0.4-1-1V5c0-1.7,1.3-3,3-3h4c1.7,0,3,1.3,3,3v2C21,7.6,20.6,8,20,8z"/>
-                    </g>
-                    <g>
-                        <path d="M16,16v-2c-1.7,0-3,1.3-3,3s1.3,3,3,3s3-1.3,3-3h-2C16.4,17,16,16.6,16,16z"/>
-                        <path d="M26,4h-3.1C23,4.3,23,4.7,23,5v2c0,1.7-1.3,3-3,3h-8c-1.7,0-3-1.3-3-3V5c0-0.3,0-0.7,0.1-1H6C5.4,4,5,4.4,5,5v24
-                            c0,0.6,0.4,1,1,1h20c0.6,0,1-0.4,1-1V5C27,4.4,26.6,4,26,4z M12,28h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S12.6,28,12,28
-                            z M16,25h-6c-0.6,0-1-0.4-1-1s0.4-1,1-1h6c0.6,0,1,0.4,1,1S16.6,25,16,25z M21,17c0,2.8-2.2,5-5,5s-5-2.2-5-5s2.2-5,5-5
-                            c0-0.6,0.4-1,1-1c2.8,0,5,2.2,5,5C22,16.6,21.6,17,21,17z"/>
-                        <path d="M18,13.2V15h1.8C19.5,14.1,18.9,13.5,18,13.2z"/>
-                    </g>
-                    </svg>
+            {{-- 2. LAPORAN KERJA (Menu yang tadi hilang) --}}
+            <a href="{{ route('laporan_kegiatan.index') }}" class="flex items-center space-x-4 px-4 py-4 rounded-2xl transition-all {{ request()->routeIs('laporan_kegiatan.*') ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                <span class="w-6 h-6 shrink-0">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 </span>
-                <span class="menu-text">Laporan Kegiatan</span>
+                <span x-show="!isCollapsed" class="font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">Laporan Kerja</span>
             </a>
-            {{-- Rekap --}}
-            @php
-                $rekapOpen = request()->routeIs('rekap.*');
-            @endphp
 
-            <div class="menu-group {{ $rekapOpen ? 'open' : '' }}">
-
-                <button type="button" class="menu-item dropdown-toggle">
-
-                    <span class="menu-icon">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 4h4v4H4V4zm6 0h10v4H10V4zM4 10h4v4H4v-4zm6 0h10v4H10v-4zM4 16h4v4H4v-4zm6 0h10v4H10v-4z"/>
-                        </svg>
-                    </span>
-
-                    <span class="menu-text">Rekap</span>
-
-                    <span class="caret">▾</span>
-
+            {{-- 3. REKAP DROPDOWN (MELAYANG) --}}
+            <div class="relative group/menu" x-data="{ open: false }">
+                <button @click="isCollapsed ? open = !open : rekapOpen = !rekapOpen" 
+                        type="button" 
+                        class="w-full flex items-center justify-between px-4 py-4 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all">
+                    <div class="flex items-center space-x-4">
+                        <span class="w-6 h-6 shrink-0"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/></svg></span>
+                        <span x-show="!isCollapsed" class="font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">Rekapitulasi</span>
+                    </div>
+                    <svg x-show="!isCollapsed" :class="rekapOpen ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div class="dropdown">
-                    <a href="{{ route('rekap.triwulan') }}"
-                    class="dropdown-item {{ request()->routeIs('rekap.triwulan') ? 'active' : '' }}">
-                        Triwulan
-                    </a>
-
-                    <a href="{{ route('rekap.tahunan') }}"
-                    class="dropdown-item {{ request()->routeIs('rekap.tahunan') ? 'active' : '' }}">
-                        Tahunan
-                    </a>
+                {{-- Dropdown Melayang Rekap --}}
+                <div x-show="isCollapsed && open" @click.away="open = false" x-transition:enter="transition ease-out duration-200"
+                    class="fixed left-[75px] bg-slate-800 border border-white/10 rounded-2xl shadow-2xl p-2 min-w-[180px] z-[9999]" style="margin-top: -50px;">
+                    <a href="{{ route('rekap.triwulan') }}" class="block p-3 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-blue-400 hover:bg-white/5 rounded-xl transition-all">Triwulan</a>
+                    <a href="{{ route('rekap.tahunan') }}" class="block p-3 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-blue-400 hover:bg-white/5 rounded-xl transition-all">Tahunan</a>
                 </div>
 
+                {{-- Dropdown Normal Rekap --}}
+                <div x-show="rekapOpen && !isCollapsed" x-transition class="pl-12 space-y-2 mt-2 border-l border-white/5 ml-6">
+                    <a href="{{ route('rekap.triwulan') }}" class="block text-[10px] font-black uppercase tracking-widest hover:text-blue-400 transition-colors">Triwulan</a>
+                    <a href="{{ route('rekap.tahunan') }}" class="block text-[10px] font-black uppercase tracking-widest hover:text-blue-400 transition-colors">Tahunan</a>
+                </div>
             </div>
 
-
-            {{-- Master Kegiatan --}}
-            <a href="{{ route('master-kegiatan.index') }}"
-               class="menu-item {{ request()->routeIs('master-kegiatan.*') ? 'active' : '' }}">
-                <span class="menu-icon">      
-                    <svg fill="#ffffff" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13.981 2H6.018s-.996 0-.996 1h9.955c0-1-.996-1-.996-1zm2.987 3c0-1-.995-1-.995-1H4.027s-.995 0-.995 1v1h13.936V5zm1.99 1l-.588-.592V7H1.63V5.408L1.041 6C.452 6.592.03 6.75.267 8c.236 1.246 1.379 8.076 1.549 9 .186 1.014 1.217 1 1.217 1h13.936s1.03.014 1.217-1c.17-.924 1.312-7.754 1.549-9 .235-1.25-.187-1.408-.777-2zM14 11.997c0 .554-.449 1.003-1.003 1.003H7.003A1.003 1.003 0 0 1 6 11.997V10h1v2h6v-2h1v1.997z"/></svg>
+            {{-- 4. MASTER DATA (Menu yang tadi hilang) --}}
+            <a href="{{ route('master-kegiatan.index') }}" class="flex items-center space-x-4 px-4 py-4 rounded-2xl transition-all {{ request()->routeIs('master-kegiatan.*') ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                <span class="w-6 h-6 shrink-0">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2"/></svg>
                 </span>
-               <span class="menu-text">Master Kegiatan</span>
+                <span x-show="!isCollapsed" class="font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">Master Data</span>
             </a>
 
-            {{-- MENU ADMIN --}}
-            @auth
-                @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.users.index') }}" class="menu-item">
-                        <span class="menu-icon">
-                        <svg viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>user-management-filled</title>
-                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="audio-description1" fill="#ffffff" transform="translate(64.000000, 64.000000)">
-                                    <path d="M136.875994,213.332429 C131.288494,226.120529 128.135918,240.215954 128.004295,255.032675 L128,256 L128,383.999429 L-4.26325641e-14,384 L-4.26325641e-14,298.666667 C-4.26325641e-14,251.991467 37.426752,214.097963 83.9216506,213.34476 L85.3333333,213.333333 L136.875994,213.332429 Z M298.666667,170.666667 C345.794965,170.666667 384,208.871701 384,256 L384,384 L149.333333,384 L149.333333,256 C149.333333,208.871701 187.538368,170.666667 234.666667,170.666667 L298.666667,170.666667 Z M106.666667,64 C141.952,64 170.666667,92.7146667 170.666667,128 C170.666667,163.285333 141.952,192 106.666667,192 C71.3813333,192 42.6666667,163.285333 42.6666667,128 C42.6666667,92.7146667 71.3813333,64 106.666667,64 Z M266.666667,1.42108547e-14 C307.84,1.42108547e-14 341.333333,33.4933333 341.333333,74.6666667 C341.333333,115.84 307.84,149.333333 266.666667,149.333333 C225.493333,149.333333 192,115.84 192,74.6666667 C192,33.4933333 225.493333,1.42108547e-14 266.666667,1.42108547e-14 Z" id="Mask">
-                        </path>
-                                </g>
-                            </g>
-                        </svg>
-                        </span>
-                        <span class="menu-text">Manajemen User</span>
-                    </a>
-                @endif
-            @endauth
-
-            {{-- Pengaturan --}}
-            @php
-                $settingOpen = request()->routeIs(
-                    'profil.asn*',
-                    'profile.security',
-                    'settings.display'
-                );
-            @endphp
-
-            <div class="menu-group {{ $settingOpen ? 'open' : '' }}">
-                <button type="button" class="menu-item dropdown-toggle">
-                    <span class="menu-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14 5.28988H13C13 5.7323 13.2907 6.12213 13.7148 6.24833L14 5.28988ZM15.3302 5.84137L14.8538 6.72058C15.2429 6.93144 15.7243 6.86143 16.0373 6.54847L15.3302 5.84137ZM16.2426 4.92891L15.5355 4.2218V4.2218L16.2426 4.92891ZM17.6569 4.92891L16.9498 5.63601L16.9498 5.63602L17.6569 4.92891ZM19.0711 6.34312L19.7782 5.63602V5.63602L19.0711 6.34312ZM19.0711 7.75734L18.364 7.05023L19.0711 7.75734ZM18.1586 8.66978L17.4515 7.96268C17.1386 8.27563 17.0686 8.75709 17.2794 9.14621L18.1586 8.66978ZM18.7101 10L17.7517 10.2853C17.8779 10.7093 18.2677 11 18.7101 11V10ZM18.7101 14V13C18.2677 13 17.8779 13.2907 17.7517 13.7148L18.7101 14ZM18.1586 15.3302L17.2794 14.8538C17.0686 15.2429 17.1386 15.7244 17.4515 16.0373L18.1586 15.3302ZM19.0711 16.2427L19.7782 15.5356V15.5356L19.0711 16.2427ZM19.0711 17.6569L18.364 16.9498L18.364 16.9498L19.0711 17.6569ZM17.6569 19.0711L18.364 19.7782V19.7782L17.6569 19.0711ZM15.3302 18.1586L16.0373 17.4515C15.7243 17.1386 15.2429 17.0686 14.8538 17.2794L15.3302 18.1586ZM14 18.7101L13.7148 17.7517C13.2907 17.8779 13 18.2677 13 18.7101H14ZM10 18.7101H11C11 18.2677 10.7093 17.8779 10.2853 17.7517L10 18.7101ZM8.6698 18.1586L9.14623 17.2794C8.7571 17.0685 8.27565 17.1385 7.96269 17.4515L8.6698 18.1586ZM7.75736 19.071L7.05026 18.3639L7.05026 18.3639L7.75736 19.071ZM6.34315 19.071L5.63604 19.7782H5.63604L6.34315 19.071ZM4.92894 17.6568L4.22183 18.3639H4.22183L4.92894 17.6568ZM4.92894 16.2426L4.22183 15.5355H4.22183L4.92894 16.2426ZM5.84138 15.3302L6.54849 16.0373C6.86144 15.7243 6.93146 15.2429 6.7206 14.8537L5.84138 15.3302ZM5.28989 14L6.24835 13.7147C6.12215 13.2907 5.73231 13 5.28989 13V14ZM5.28989 10V11C5.73231 11 6.12215 10.7093 6.24835 10.2852L5.28989 10ZM5.84138 8.66982L6.7206 9.14625C6.93146 8.75712 6.86145 8.27567 6.54849 7.96272L5.84138 8.66982ZM4.92894 7.75738L4.22183 8.46449H4.22183L4.92894 7.75738ZM4.92894 6.34317L5.63605 7.05027H5.63605L4.92894 6.34317ZM6.34315 4.92895L7.05026 5.63606L7.05026 5.63606L6.34315 4.92895ZM7.75737 4.92895L8.46447 4.22185V4.22185L7.75737 4.92895ZM8.6698 5.84139L7.9627 6.54849C8.27565 6.86145 8.7571 6.93146 9.14623 6.7206L8.6698 5.84139ZM10 5.28988L10.2853 6.24833C10.7093 6.12213 11 5.7323 11 5.28988H10ZM11 2C9.89545 2 9.00002 2.89543 9.00002 4H11V4V2ZM13 2H11V4H13V2ZM15 4C15 2.89543 14.1046 2 13 2V4H15ZM15 5.28988V4H13V5.28988H15ZM15.8066 4.96215C15.3271 4.70233 14.8179 4.48994 14.2853 4.33143L13.7148 6.24833C14.1132 6.36691 14.4944 6.52587 14.8538 6.72058L15.8066 4.96215ZM15.5355 4.2218L14.6231 5.13426L16.0373 6.54847L16.9498 5.63602L15.5355 4.2218ZM18.364 4.2218C17.5829 3.44075 16.3166 3.44075 15.5355 4.2218L16.9498 5.63602V5.63601L18.364 4.2218ZM19.7782 5.63602L18.364 4.2218L16.9498 5.63602L18.364 7.05023L19.7782 5.63602ZM19.7782 8.46444C20.5592 7.68339 20.5592 6.41706 19.7782 5.63602L18.364 7.05023L18.364 7.05023L19.7782 8.46444ZM18.8657 9.37689L19.7782 8.46444L18.364 7.05023L17.4515 7.96268L18.8657 9.37689ZM19.6686 9.71475C19.5101 9.18211 19.2977 8.67285 19.0378 8.19335L17.2794 9.14621C17.4741 9.50555 17.6331 9.8868 17.7517 10.2853L19.6686 9.71475ZM18.7101 11H20V9H18.7101V11ZM20 11H22C22 9.89543 21.1046 9 20 9V11ZM20 11V13H22V11H20ZM20 13V15C21.1046 15 22 14.1046 22 13H20ZM20 13H18.7101V15H20V13ZM19.0378 15.8066C19.2977 15.3271 19.5101 14.8179 19.6686 14.2852L17.7517 13.7148C17.6331 14.1132 17.4741 14.4944 17.2794 14.8538L19.0378 15.8066ZM19.7782 15.5356L18.8657 14.6231L17.4515 16.0373L18.364 16.9498L19.7782 15.5356ZM19.7782 18.364C20.5592 17.5829 20.5592 16.3166 19.7782 15.5356L18.364 16.9498H18.364L19.7782 18.364ZM18.364 19.7782L19.7782 18.364L18.364 16.9498L16.9498 18.364L18.364 19.7782ZM15.5355 19.7782C16.3166 20.5592 17.5829 20.5592 18.364 19.7782L16.9498 18.364L15.5355 19.7782ZM14.6231 18.8657L15.5355 19.7782L16.9498 18.364L16.0373 17.4515L14.6231 18.8657ZM14.2853 19.6686C14.8179 19.5101 15.3271 19.2977 15.8066 19.0378L14.8538 17.2794C14.4944 17.4741 14.1132 17.6331 13.7148 17.7517L14.2853 19.6686ZM15 20V18.7101H13V20H15ZM13 22C14.1046 22 15 21.1046 15 20H13V22ZM11 22H13V20H11V22ZM9.00002 20C9.00002 21.1046 9.89545 22 11 22V20H9.00002ZM9.00002 18.7101V20H11V18.7101H9.00002ZM8.19337 19.0378C8.67287 19.2977 9.18213 19.5101 9.71477 19.6686L10.2853 17.7517C9.88681 17.6331 9.50557 17.4741 9.14623 17.2794L8.19337 19.0378ZM8.46447 19.7782L9.3769 18.8657L7.96269 17.4515L7.05026 18.3639L8.46447 19.7782ZM5.63604 19.7782C6.41709 20.5592 7.68342 20.5592 8.46447 19.7781L7.05026 18.3639L5.63604 19.7782ZM4.22183 18.3639L5.63604 19.7782L7.05026 18.3639L5.63604 16.9497L4.22183 18.3639ZM4.22183 15.5355C3.44078 16.3166 3.44078 17.5829 4.22183 18.3639L5.63604 16.9497V16.9497L4.22183 15.5355ZM5.13427 14.6231L4.22183 15.5355L5.63604 16.9497L6.54849 16.0373L5.13427 14.6231ZM4.33144 14.2852C4.48996 14.8179 4.70234 15.3271 4.96217 15.8066L6.7206 14.8537C6.52589 14.4944 6.36693 14.1132 6.24835 13.7147L4.33144 14.2852ZM5.28989 13H4V15H5.28989V13ZM4 13H4H2C2 14.1046 2.89543 15 4 15V13ZM4 13V11H2V13H4ZM4 11V9C2.89543 9 2 9.89543 2 11H4ZM4 11H5.28989V9H4V11ZM4.96217 8.1934C4.70235 8.67288 4.48996 9.18213 4.33144 9.71475L6.24835 10.2852C6.36693 9.88681 6.52589 9.50558 6.7206 9.14625L4.96217 8.1934ZM4.22183 8.46449L5.13428 9.37693L6.54849 7.96272L5.63605 7.05027L4.22183 8.46449ZM4.22183 5.63606C3.44078 6.41711 3.44079 7.68344 4.22183 8.46449L5.63605 7.05027L5.63605 7.05027L4.22183 5.63606ZM5.63605 4.22185L4.22183 5.63606L5.63605 7.05027L7.05026 5.63606L5.63605 4.22185ZM8.46447 4.22185C7.68343 3.4408 6.4171 3.4408 5.63605 4.22185L7.05026 5.63606V5.63606L8.46447 4.22185ZM9.37691 5.13428L8.46447 4.22185L7.05026 5.63606L7.9627 6.54849L9.37691 5.13428ZM9.71477 4.33143C9.18213 4.48995 8.67287 4.70234 8.19337 4.96218L9.14623 6.7206C9.50557 6.52588 9.88681 6.36692 10.2853 6.24833L9.71477 4.33143ZM9.00002 4V5.28988H11V4H9.00002Z" fill="#ffffff"/>
-                        <circle cx="12" cy="12" r="3" stroke="#fffcfc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    <span class="menu-text">Pengaturan</span>
-                    <span class="caret">▾</span>
+            {{-- 5. PENGATURAN DROPDOWN (MELAYANG) --}}
+            <div class="relative group/menu" x-data="{ open: false }">
+                <button @click="isCollapsed ? open = !open : settingOpen = !settingOpen" 
+                        type="button" 
+                        class="w-full flex items-center justify-between px-4 py-4 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all">
+                    <div class="flex items-center space-x-4">
+                        <span class="w-6 h-6 shrink-0"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg></span>
+                        <span x-show="!isCollapsed" class="font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap">Pengaturan</span>
+                    </div>
+                    <svg x-show="!isCollapsed" :class="settingOpen ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div class="dropdown">
-                    <a href="{{ route('profil.asn') }}"
-                       class="dropdown-item {{ request()->routeIs('profil.asn*') ? 'active' : '' }}">
-                        Profil ASN
-                    </a>
+                {{-- Dropdown Melayang Pengaturan --}}
+                <div x-show="isCollapsed && open" @click.away="open = false" x-transition:enter="transition ease-out duration-200"
+                    class="fixed left-[75px] bg-slate-800 border border-white/10 rounded-2xl shadow-2xl p-2 min-w-[180px] z-[9999]" style="margin-top: -50px;">
+                    <a href="{{ route('profil.asn') }}" class="block p-3 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-blue-400 hover:bg-white/5 rounded-xl transition-all">Profil ASN</a>
+                    <a href="{{ route('profile.security') }}" class="block p-3 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-blue-400 hover:bg-white/5 rounded-xl transition-all">Keamanan</a>
+                </div>
 
-                    <a href="{{ route('profile.security') }}"
-                       class="dropdown-item {{ request()->routeIs('profile.security') ? 'active' : '' }}">
-                        Ubah Password
-                    </a>
+                {{-- Dropdown Normal Pengaturan --}}
+                <div x-show="settingOpen && !isCollapsed" x-transition class="pl-12 space-y-2 mt-2 border-l border-white/5 ml-6">
+                    <a href="{{ route('profil.asn') }}" class="block text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Profil ASN</a>
+                    <a href="{{ route('profile.security') }}" class="block text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Keamanan</a>
                 </div>
             </div>
         </nav>
     </div>
 
-    <div class="sidebar-bottom">
-        <a href="{{ route('profil.asn.edit') }}" class="sidebar-profile">
-            <div class="avatar-wrapper">
-                <img
-                    src="{{ auth()->user()->photo
-                        ? asset('storage/' . auth()->user()->photo)
-                        : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name)
-                    }}"
-                    alt="Foto Profil">
-                <span class="avatar-edit">✎</span>
-            </div>
-
-            <div class="profile-info">
-                <strong>{{ auth()->user()->name }}</strong>
-                <small>{{ auth()->user()->nip }}</small>
+    {{-- BAGIAN BAWAH: PROFIL --}}
+    <div class="p-4 border-t border-white/5 bg-slate-950/50 backdrop-blur-md">
+        <a href="{{ route('profil.asn.edit') }}" class="flex items-center p-2 rounded-2xl bg-white/5 hover:bg-white/10 transition-all mb-4">
+            <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}" 
+                 class="w-10 h-10 rounded-xl object-cover shrink-0 shadow-lg border border-white/10">
+            <div x-show="!isCollapsed" class="ml-3 min-w-0">
+                <p class="text-[11px] font-black text-white truncate uppercase italic">{{ auth()->user()->name }}</p>
+                <p class="text-[9px] font-bold text-slate-500 truncate tracking-widest">{{ auth()->user()->nip }}</p>
             </div>
         </a>
+
+        <form method="POST" action="{{ route('logout') }}" class="px-2">
+            @csrf
+            <button type="submit" class="w-full flex items-center justify-center space-x-2 py-3 bg-rose-500/10 hover:bg-rose-600 text-rose-500 hover:text-white rounded-xl transition-all font-black text-[9px] uppercase tracking-[0.2em]">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span x-show="!isCollapsed" class="whitespace-nowrap">Logout Sistem</span>
+            </button>
+        </form>
     </div>
-
-    <form method="POST" action="{{ route('logout') }}" class="logout-form">
-        @csrf
-        <button type="submit" class="logout-btn">
-            <span class="logout-icon">⏻</span>
-            <span class="menu-text">Logout</span>
-        </button>
-    </form>
-
 </aside>
