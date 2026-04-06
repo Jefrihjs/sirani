@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: siceria_app  
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    tty: true
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    ports:
+      - "8002:8000"  
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: siceria_db   
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sirani      
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"  
+    volumes:
+      - siceria_dbdata:/var/lib/mysql
+
+volumes:
+  siceria_dbdata:

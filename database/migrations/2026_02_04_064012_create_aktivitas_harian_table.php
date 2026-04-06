@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateAktivitasHarianTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('aktivitas_harian', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            $table->date('tanggal');
+            $table->time('jam_mulai');
+            $table->time('jam_selesai');
+
+            $table->string('kegiatan', 255);
+            $table->text('uraian')->nullable();
+
+            $table->enum('status', ['draft','diajukan','disetujui','ditolak'])->default('draft');
+            $table->foreignId('atasan_id')->nullable()->constrained('users');
+
+            $table->timestamps();
+
+            $table->index(['user_id','tanggal']);
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('aktivitas_harian');
+    }
+}

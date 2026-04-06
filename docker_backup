@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: siceria_app
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - sirani_net
+  db:
+    image: mysql:8.4
+    container_name: siceria_db
+    environment:
+      MYSQL_DATABASE: sirani
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+    networks:
+      - sirani_net
+networks:
+  sirani_net:
+    driver: bridge
