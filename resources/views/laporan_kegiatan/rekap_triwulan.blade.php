@@ -4,7 +4,7 @@
 
 @section('content')
 {{-- Memanggil Tailwind --}}
-<script src="https://cdn.tailwindcss.com"></script>
+
 
 <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
 

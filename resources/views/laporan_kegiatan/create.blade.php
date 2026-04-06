@@ -6,7 +6,7 @@
 {{-- Memanggil Library Kalender Modern --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+
 
 <div class="max-w-4xl mx-auto py-8 px-4">
     

@@ -1,6 +1,6 @@
 <x-guest-layout>
 {{-- Memanggil Tailwind --}}
-<script src="https://cdn.tailwindcss.com"></script>
+
 
 <div class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden font-sans">
     

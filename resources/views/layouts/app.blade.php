@@ -5,49 +5,39 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
+        {{-- CSP Meta Tag --}}
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval';">
         
         <title>{{ config('app.name', 'SiCERIA - Sistem Pelaporan ASN') }}</title>
 
-       
-        <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+        {{-- CSS Lokal (Pastikan file sudah ada di public/css) --}}
+        <link rel="stylesheet" href="{{ asset('css/cropper.css') }}">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
         
-        
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {{-- JS Lokal (PENTING: Ganti CDN ke Asset Lokal) --}}
+        <script src="{{ asset('js/tailwind.min.js') }}"></script>
+        <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
         <style>
-            
-            
-           
             header, main {
                 transition: all 0.5s ease-in-out;
                 margin-left: 18rem; 
             }
-
-            
             .sidebar-is-collapsed header, 
             .sidebar-is-collapsed main {
                 margin-left: 5rem; 
             }
-
-           
             @media (max-width: 1024px) {
-                header, main {
-                    margin-left: 0 !important;
-                }
+                header, main { margin-left: 0 !important; }
             }
-
-            
             ::-webkit-scrollbar { width: 5px; }
             ::-webkit-scrollbar-track { background: #f1f1f1; }
             ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
         </style>
 
-        {{-- JS Utama --}}
+        {{-- JS Pendukung Lokal --}}
         <script src="{{ asset('js/sweetalert2.js') }}"></script>
-        <script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
+        <script src="{{ asset('js/cropper.js') }}"></script>
         <script src="{{ asset('js/app.js') }}?v={{ time() }}" defer></script>
     </head>
     

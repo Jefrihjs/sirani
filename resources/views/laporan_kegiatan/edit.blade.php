@@ -4,7 +4,7 @@
 
 @section('content')
 {{-- Memastikan Tailwind Aktif --}}
-<script src="https://cdn.tailwindcss.com"></script>
+
 
 <div class="p-4 md:p-10 max-w-5xl mx-auto space-y-8">
 
