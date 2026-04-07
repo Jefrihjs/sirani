@@ -88,10 +88,7 @@
                             <option value="Fungsional" {{ $currentJenis === 'Fungsional' ? 'selected' : '' }}>Fungsional</option>
                             <option value="Struktural" {{ $currentJenis === 'Struktural' ? 'selected' : '' }}>Struktural</option>
                             <option value="Pelaksana" {{ $currentJenis === 'Pelaksana' ? 'selected' : '' }}>Pelaksana</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-6 flex items-center pointer-events-none text-blue-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
+                        </select>                        
                     </div>
                 </div>
 
@@ -115,10 +112,7 @@
                             @foreach ($atasanList as $atasan)
                                 <option value="{{ $atasan->id }}" {{ old('atasan_id', $profile->atasan_id) == $atasan->id ? 'selected' : '' }}>{{ $atasan->name }}</option>
                             @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-6 flex items-center pointer-events-none text-blue-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
-                        </div>
+                        </select>                       
                     </div>
                 </div>
             </div>

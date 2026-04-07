@@ -177,8 +177,11 @@ class LaporanKegiatanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $laporan = LaporanKegiatan::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+        $laporan = LaporanKegiatan::where('id', $id)
+                    ->where('user_id', auth()->id())
+                    ->firstOrFail();
 
+       
         $request->validate([
             'master_kegiatan_id' => 'required|exists:master_kegiatan,id',
             'tanggal' => 'required|date',
@@ -188,12 +191,18 @@ class LaporanKegiatanController extends Controller
             'uraian' => 'required|string',
         ]);
 
-        $mulai   = Carbon::createFromFormat('H:i', substr($request->jam_mulai, 0, 5));
-        $selesai = Carbon::createFromFormat('H:i', substr($request->jam_selesai, 0, 5));
+        
+        $mulai   = \Carbon\Carbon::createFromFormat('H:i', substr($request->jam_mulai, 0, 5));
+        $selesai = \Carbon\Carbon::createFromFormat('H:i', substr($request->jam_selesai, 0, 5));
 
-        if ($selesai->lessThan($mulai)) { $selesai->addDay(); }
+        
+        if ($selesai->lessThan($mulai)) { 
+            $selesai->addDay(); 
+        }
+        
         $durasiMenit = $mulai->diffInMinutes($selesai);
 
+        
         $laporan->update([
             'master_kegiatan_id' => $request->master_kegiatan_id,
             'tanggal' => $request->tanggal,
@@ -204,9 +213,16 @@ class LaporanKegiatanController extends Controller
             'uraian' => $request->uraian,
         ]);
 
-        return redirect()->route('laporan_kegiatan.index')->with('success', 'Laporan berhasil diperbarui');
-    }
+        
+        $bulan = date('m', strtotime($request->tanggal));
+        $tahun = date('Y', strtotime($request->tanggal));
 
+        
+        return redirect()->route('laporan_kegiatan.index', [
+            'bulan' => $bulan,
+            'tahun' => $tahun
+        ])->with('success', 'Laporan berhasil diperbarui');
+    }
     public function destroy($id)
     {
         $laporan = LaporanKegiatan::where('id', $id)->where('user_id', auth()->id())->firstOrFail();

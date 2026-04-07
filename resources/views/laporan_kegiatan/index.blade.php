@@ -47,10 +47,6 @@
                     @endforeach
                 </select>
                 <input type="hidden" name="tahun" value="{{ $tahun }}">
-                {{-- Ikon panah dipastikan center --}}
-                <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" /></svg>
-                </div>
             </form>
 
             {{-- Tombol Buat Laporan --}}
