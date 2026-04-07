@@ -1,45 +1,28 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        
-        {{-- CSP Meta Tag --}}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval';">
-        
-        <title>{{ config('app.name', 'SiCERIA - Sistem Pelaporan ASN') }}</title>
-
-        {{-- CSS Lokal (Pastikan file sudah ada di public/css) --}}
-        <link rel="stylesheet" href="{{ asset('css/cropper.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
-        
-        {{-- JS Lokal (PENTING: Ganti CDN ke Asset Lokal) --}}
-        <script src="{{ asset('js/tailwind.min.js') }}"></script>
-        <script defer src="{{ asset('js/alpine.min.js') }}"></script>
-
-        <style>
-            header, main {
-                transition: all 0.5s ease-in-out;
-                margin-left: 18rem; 
-            }
-            .sidebar-is-collapsed header, 
-            .sidebar-is-collapsed main {
-                margin-left: 5rem; 
-            }
-            @media (max-width: 1024px) {
-                header, main { margin-left: 0 !important; }
-            }
-            ::-webkit-scrollbar { width: 5px; }
-            ::-webkit-scrollbar-track { background: #f1f1f1; }
-            ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-        </style>
-
-        {{-- JS Pendukung Lokal --}}
-        <script src="{{ asset('js/sweetalert2.js') }}"></script>
-        <script src="{{ asset('js/cropper.js') }}"></script>
-        <script src="{{ asset('js/app.js') }}?v={{ time() }}" defer></script>
-    </head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>SiCERIA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+    {{-- Panggil hanya yang lokal di sini --}}
+    <script src="{{ asset('js/tailwind.js') }}"></script>
+    <script src="{{ asset('js/alpine.js') }}" defer></script>
+    
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    
+    <style>
+       [x-cloak] { display: none !important; }
+    
+       svg { width: 24px !important; height: 24px !important; }
+        .w-12, .h-12 { width: 48px !important; height: 48px !important; }
+        .w-72 { width: 288px !important; }
+        [x-cloak] { display: none !important; }
+    
+    </style>
+</head>
     
     <body class="font-sans antialiased bg-gray-50"
           {{-- Inisialisasi status sidebar di level Body --}}

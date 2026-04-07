@@ -9,7 +9,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="group flex items-center space-x-3">
                         <div class="p-2 bg-blue-600 rounded-xl group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-blue-200">
-                             <x-application-logo class="h-6 w-auto fill-current text-white" />
+                             <x-application-logo class="h-6 w-auto text-white" />
                         </div>
                         <span class="text-xl font-black text-slate-800 tracking-tighter uppercase">Si<span class="text-blue-600">Ceria</span></span>
                     </a>

@@ -60,24 +60,26 @@ class ProfileController extends Controller
 
         $user = auth()->user();
 
-        $path = 'profile/'.$user->id.'.jpg';
+        if ($request->hasFile('photo')) {
 
-        // hapus foto lama (jaga storage tetap bersih)
-        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-            Storage::disk('public')->delete($user->photo);
+            // hapus foto lama jika ada
+            if ($user->photo && Storage::exists('public/'.$user->photo)) {
+                Storage::delete('public/'.$user->photo);
+            }
+
+            // buat nama file unik
+            $filename = time().'_'.$user->id.'.jpg';
+
+            // simpan foto
+            $request->file('photo')->storeAs('profile', $filename, 'public');
+
+            // update database
+            $user->update([
+                'photo' => 'profile/'.$filename
+            ]);
         }
 
-        $image = Image::make($request->file('photo'))
-            ->fit(400, 400)
-            ->encode('jpg', 80);
-
-        Storage::disk('public')->put($path, (string) $image);
-
-        $user->update([
-            'photo' => $path
-        ]);
-
-        return back();
+        return back()->with('status', 'photo-updated');
     }
 
 

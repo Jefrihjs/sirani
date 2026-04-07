@@ -1,6 +1,3 @@
-{{-- Script Alpine.js --}}
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
 <aside id="sidebar" 
     x-data="{ 
         isCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
@@ -27,8 +24,13 @@
                 
                 {{-- Grup Logo & Judul --}}
                 <div class="flex items-center" :class="isCollapsed ? 'mb-6' : 'space-x-4'">
-                    <div class="p-2 bg-white rounded-2xl shadow-xl shrink-0 flex items-center justify-center w-12 h-12">
-                        <img src="{{ asset('img/siceria-logo.png') }}" class="w-8 h-8 object-contain" alt="Logo">
+                    <div class="p-2 bg-white rounded-2xl shadow-xl shrink-0 flex items-center justify-center w-12 h-12" 
+                        style="width: 48px; height: 48px;"> {{-- Kunci ukuran container (w-12) --}}
+                        
+                        <img src="{{ asset('img/siceria-logo.png') }}" 
+                            class="w-8 h-8 object-contain" 
+                            style="width: 32px; height: 32px;" {{-- Kunci ukuran gambar (w-8) --}}
+                            alt="Logo">
                     </div>
                     {{-- Teks Brand --}}
                     <h1 x-show="!isCollapsed" x-transition.opacity class="text-3xl font-black text-white tracking-tighter italic whitespace-nowrap">

@@ -16,7 +16,9 @@ class AsnProfileController extends Controller
     public function show()
     {
         $user = auth()->user();
-        $profile = $user->asnProfile;
+        $profile = $user->asnProfile ?? AsnProfile::create([
+            'user_id' => $user->id
+        ]);
 
         return view('profile.show', compact(
             'user',
@@ -50,7 +52,9 @@ class AsnProfileController extends Controller
     public function update(Request $request)
     {
         $user = auth()->user();
-        $profile = $user->asnProfile;
+        $profile = $user->asnProfile ?? AsnProfile::create([
+            'user_id' => $user->id
+        ]);
 
         $request->validate([
             'photo' => 'nullable|image|max:2048',
@@ -58,28 +62,27 @@ class AsnProfileController extends Controller
             'jenis_jabatan' => 'required',
             'unit_kerja' => 'required',
             'golongan_ruang' => 'required',
-            'status_kepegawaian' => 'required',
+            'status_kepegawaian' => 'nullable',
         ]);
 
         /* ===== FOTO PROFIL ===== */
         if ($request->hasFile('photo')) {
 
-            $path = 'profile/'.$user->id.'.jpg';
-
-            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-                Storage::disk('public')->delete($user->photo);
+            // hapus foto lama
+            if ($user->photo && Storage::exists('public/'.$user->photo)) {
+                Storage::delete('public/'.$user->photo);
             }
 
-            $image = Image::make($request->file('photo'))
-                ->fit(400, 400)
-                ->encode('jpg', 80);
+            // nama file baru
+            $fileName = time().'_'.$user->id.'.jpg';
 
-            Storage::disk('public')->put($path, (string) $image);
+            // simpan file
+            $request->file('photo')->storeAs('profile', $fileName, 'public');
 
-            $user->photo = $path;
+            // update database
+            $user->photo = 'profile/'.$fileName;
             $user->save();
         }
-
         /* ===== DATA ASN ===== */
         $profile->update([
             'jabatan' => $request->jabatan,

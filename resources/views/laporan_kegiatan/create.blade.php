@@ -4,8 +4,8 @@
 
 @section('content')
 {{-- Memanggil Library Kalender Modern --}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="{{ asset('css/flatpickr.min.css') }}">
+<script src="{{ asset('js/flatpickr.js') }}"></script>
 
 
 <div class="max-w-4xl mx-auto py-8 px-4">

@@ -4,9 +4,10 @@
 
 @section('content')
 {{-- Memanggil Tailwind --}}
+<script src="{{ asset('js/chart.js') }}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+
 document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('chartProduktivitas');
     
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] group-hover:bg-blue-500/30 transition-all"></div>
         <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
 
-        <div class="relative z-10 p-10 md:p-16 flex flex-col md:flex-row md:items-center justify-between gap-10">
+        <div class="relative z-10 p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="space-y-6">
                <div class="flex items-center gap-4">
                 {{-- Badge SISTEM TERKONEKSI - Kunci Tinggi 32px --}}
@@ -138,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
     {{-- STATS GRID: DATA MENGIKUTI BULAN YG DIPILIH --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {{-- CAPAIAN KINERJA --}}
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-100 relative group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden">
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 relative group hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
             <div class="relative z-10">
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Capaian Kinerja</span>
